@@ -9,7 +9,8 @@
 
 import numpy as np
 from sklearn import linear_model
-
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 ## ToDo: find and print RMSE for train data
 
@@ -35,8 +36,6 @@ data_train_Y = data_train[:, 1]
 
 # get x columns
 data_train_X = data_train[:, 2:n_col_train]
-
-
 
 
 # get TEST data
@@ -77,9 +76,18 @@ data_test_Y_pred = regr.predict(data_test_X)
 
 
 # Make predictions using the testing set
-#to del: data_train_Y_pred = regr.predict(data_train_X)
 data_test_Y_pred = regr.predict(data_test_X)
 
 # save stuff in a file
 output = np.column_stack((data_test_id, data_test_Y_pred))
 np.savetxt('regression_predictions.csv', output, delimiter=',', header="Id,y", comments='')
+
+
+
+# Make predictions using the training set
+data_train_Y_pred = regr.predict(data_train_X)
+
+#find RSME for train data:
+mse_train = mean_squared_error(data_train_Y, data_train_Y_pred)
+rmse_train = sqrt(mse_train)
+print("Train RMSE:", "\n", rmse_train)
