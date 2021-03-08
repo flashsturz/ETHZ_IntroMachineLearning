@@ -19,14 +19,16 @@ train_set['x0']=1
 
 np_train=train_set.to_numpy()
 np_train_X=np.delete(np_train,[0,1],axis=1)
-np_train_y=np_train[:,0]
-reg = LinearRegression().fit(np_train_X, np_train_y)
+np_train_y=np_train[:,1]
+#print(np_train_y) #for debugging
+reg = LinearRegression()
+reg.fit(np_train_X, np_train_y)
 
 #Evaluation of the model using RMSE.
 y_pred_train = reg.predict(np_train_X)
 score_train = mean_squared_error(np_train_y, y_pred_train, squared=False)
 
-#print("The score (calculated with RMSE)is: %.2f" % score_train)
+print("The score (calculated with RMSE)is: %.9f" % score_train)
 
 #Reading the test data and predicting the output y_pred
 test_set=pd.read_csv('data/test.csv')
