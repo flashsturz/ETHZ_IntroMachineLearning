@@ -41,7 +41,7 @@ id=test_set['Id'].to_numpy()
 #Writing the output to a csv file.
 pred_output=pd.DataFrame({'Id':id, 'y':y_pred})
 #print(pred_output)                     #debugging
-pred_output.to_csv('output.csv',index=False)
+pred_output.to_csv('regression_predictions.csv',index=False)
 
 
 
