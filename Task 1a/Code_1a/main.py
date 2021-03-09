@@ -12,7 +12,7 @@
 import numpy as np
 import random
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, RepeatedKFold
 from sklearn.linear_model import Ridge
 
 file = 'train.csv' 
@@ -30,11 +30,12 @@ y = data[0:, 0]
 lambdas = [0.1, 1, 10, 100, 200] # Ridge regression parameters
 
 # Split Data Set
-kf = KFold(n_splits = 10)
+kf = KFold(n_splits = 10) # regular 10-fold Cross Validation
+rkf = RepeatedKFold(n_splits=10, n_repeats = 150, random_state = 999) # Repeated 10-fold cross validation
 
 for _lambda in lambdas:
     rmse = [] # Root Mean Squared Error for single CV Iteration, reset to zero each time before running the 10-fold cross validation
-    for train, test in kf.split(x): # Creates the Cross Validation Folds
+    for train, test in rkf.split(x): # Creates the Cross Validation Folds
         x_train = x[train]
         y_train = y[train]
         
