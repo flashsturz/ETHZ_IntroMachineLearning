@@ -1,4 +1,3 @@
-
 #--------------------------------------------------------------------------------------------------
 # TASK 1a - Intro to Machine Learning ETHZ SS2021
 #
@@ -20,12 +19,7 @@ file = 'train.csv'
 random.seed(999)
 
 # Declare Arrays used
-x = []
-y = []
-y_pred = []
-
 rmse_lambdas = [] # Output Vector
-i = 1 # Cross Validation iterator
 
 # Read in Data
 data = np.genfromtxt('../Data_1a/' + file, dtype=float, delimiter=',', skip_header = 1)
@@ -43,11 +37,9 @@ for _lambda in lambdas:
     for train, test in kf.split(x): # Creates the Cross Validation Folds
         x_train = x[train]
         y_train = y[train]
-        n_train = len(y_train)
         
         x_val = x[test]
         y_val = y[test]
-        n_val = len(y_val)
         
         clf = Ridge(alpha = _lambda) # Initialize Ridge Regression
         clf.fit(x_train, y_train) # Fit Training Data of Cross Validation
@@ -58,4 +50,3 @@ for _lambda in lambdas:
     rmse_lambdas.append(avg_rmse) # create vector containing the average RMSE for the different lambda-values
     
 np.savetxt('avg_rmse_lambdas.csv', rmse_lambdas, fmt=['%.19f'], delimiter=',', comments='',)
-
