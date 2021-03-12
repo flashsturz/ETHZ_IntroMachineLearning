@@ -16,6 +16,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold
+from sklearn.model_selection import RepeatedKFold
 from math import sqrt
 
 class data:
@@ -37,11 +38,12 @@ for _lambda in CV_lambda:
     linmod=Ridge(alpha=_lambda,tol=1e-3)
     linmod.fit(train_data.X,train_data.y)
 
-    kf = KFold(n_splits=10, shuffle=False)
+    #kf=KFold(n_splits=10,shuffle=True,random_state=1234)
+    rkf = RepeatedKFold(n_splits=10, n_repeats=30,random_state=999)
 
     Error=0
 
-    for train_index, test_index in kf.split(train_data.X):
+    for train_index, test_index in rkf.split(train_data.X):
         X_train=train_data.X[train_index,:]
         y_train=train_data.y[train_index]
         X_test = train_data.X[test_index,:]
@@ -54,11 +56,11 @@ for _lambda in CV_lambda:
 
         Error=Error+sqrt(mean_squared_error(y_test,y_pred))
 
-    score=np.append(score,Error/kf.get_n_splits(train_data.X))
+    score=np.append(score,Error/rkf.get_n_splits(train_data.X))
 
 
 #print("Score is: ")
-#print(score)
+print(score)
 
 pd.DataFrame(score).to_csv("output.csv",header=None,index=None)
 
