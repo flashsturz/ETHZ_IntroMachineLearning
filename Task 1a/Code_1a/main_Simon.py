@@ -43,7 +43,7 @@ for _lambda in CV_lambda:
     linmod=Ridge(alpha=_lambda)
 
     #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5, 1e-4, 1e-3]}
-    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [6e-4,7e-4,9e-4,1e-3,3e-3,5e-3,7e-3,9e-3] }
+    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [55e-5,6e-4,7e-4,9e-4,1e-3,3e-3,5e-3,7e-3,9e-3] }
 
     #print(type(parameters))
     #print(parameters)
