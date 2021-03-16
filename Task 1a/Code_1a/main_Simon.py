@@ -12,11 +12,12 @@
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error
-from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, make_scorer
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import KFold
+from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import RepeatedKFold
+
 from math import sqrt
 
 class data:
@@ -27,42 +28,38 @@ class data:
         self.X=self.np_data[:,xcol_start:]
         self.y=self.np_data[:,ycol]
 
+def own_scoring(y, y_pred, **kwargs):
+    return sqrt(mean_squared_error(y, y_pred))
 #----------------------------------------------------------------------------------------------------------------------
 # Read in Data
 train_data=data('Data_1a/train.csv',0,1)
+
+ownscore=make_scorer(own_scoring)
 
 score=np.array([])
 
 CV_lambda=[0.1,1,10,100,200]
 for _lambda in CV_lambda:
-    linmod=Ridge(alpha=_lambda,tol=1e-3)
-    linmod.fit(train_data.X,train_data.y)
+    linmod=Ridge(alpha=_lambda)
 
-    #kf=KFold(n_splits=10,shuffle=True,random_state=1234)
+    #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5, 1e-4, 1e-3]}
+    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [6e-4,7e-4,9e-4,1e-3,3e-3,5e-3,7e-3,9e-3] }
+
+    #print(type(parameters))
+    #print(parameters)
+
     rkf = RepeatedKFold(n_splits=10, n_repeats=30,random_state=999)
+    gscv = GridSearchCV(linmod, param_grid=parameters,cv=rkf,scoring=ownscore)
+    gscv.fit(train_data.X,train_data.y)
 
-    Error=0
+    this_results=pd.Series(gscv.cv_results_)
+    this_bestscore=this_results['mean_test_score'][np.argmin(this_results['mean_test_score'])]
+    ind_minscore=np.argmin(this_results['mean_test_score'])
 
-    for train_index, test_index in rkf.split(train_data.X):
-        X_train=train_data.X[train_index,:]
-        y_train=train_data.y[train_index]
-        X_test = train_data.X[test_index,:]
-        y_test = train_data.y[test_index]
+    solver=this_results['params'][ind_minscore]
+    score=np.append(score,this_bestscore)
 
-        linmod = Ridge(alpha=_lambda, tol=1e-4)
-        linmod.fit(X_train, y_train)
-
-        y_pred=linmod.predict(X_test)
-
-        Error=Error+sqrt(mean_squared_error(y_test,y_pred))
-
-    score=np.append(score,Error/rkf.get_n_splits(train_data.X))
-
-
-#print("Score is: ")
-print(score)
+    print('Best Score for Lambda= %.1f was = %.9f Using %s.' % (_lambda,this_bestscore,solver) )
 
 pd.DataFrame(score).to_csv("output.csv",header=None,index=None)
-
-
-
+print('Best scores were saved in ouput.csv.')
