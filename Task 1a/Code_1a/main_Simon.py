@@ -47,10 +47,9 @@ CV_lambda=[0.1,1,10,100,200]
 for _lambda in CV_lambda:
     time_start=time.perf_counter()
     linmod=Ridge(alpha=_lambda, max_iter=5000)
-    linmod=Ridge()
 
-    #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
-    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,5e-5,1e-4,3e-4,7e-4,1e-3,3e-3,5e-3,7e-3,9e-3,1e-2,3e-2,5e-2,7e-2] }
+    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
+    #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,5e-5,1e-4,3e-4,7e-4,1e-3,3e-3,5e-3,7e-3,9e-3,1e-2,3e-2,5e-2,7e-2] }
 
     rkf = RepeatedKFold(n_splits=10, n_repeats=100,random_state=999)
     gscv = GridSearchCV(linmod, param_grid=parameters,cv=rkf,scoring=ownscore)
