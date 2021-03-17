@@ -44,7 +44,7 @@ report=pd.DataFrame(data=None, columns=["Lambda","Solver","Tolerance","Score","R
 totaltime_start=time.perf_counter()
 
 Rep_list=range(1,150,10)
-Rep_list=[5,10]
+
 for repeats in Rep_list:
     CV_lambda=[0.1,1,10,100,200]
     score = np.array([])
@@ -52,8 +52,8 @@ for repeats in Rep_list:
         time_start=time.perf_counter()
         linmod=Ridge(alpha=_lambda, max_iter=5000)
 
-        parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
-        #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,5e-5,1e-4,3e-4,7e-4,1e-3,3e-3,5e-3,7e-3,9e-3,1e-2,3e-2,5e-2,7e-2] }
+        #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
+        parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,1e-4,1e-3,5e-3,1e-2] }
 
         rkf = RepeatedKFold(n_splits=10, n_repeats=repeats,random_state=999)
         gscv = GridSearchCV(linmod, param_grid=parameters,cv=rkf,scoring=ownscore,verbose=-1)
