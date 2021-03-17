@@ -15,8 +15,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold, RepeatedKFold
 from sklearn.linear_model import Ridge
 
-file = 'train.csv' 
-random.seed(999)
+file = 'train.csv'
 
 # Declare Arrays used
 rmse_lambdas = [] # Output Vector
@@ -31,10 +30,11 @@ lambdas = [0.1, 1, 10, 100, 200] # Ridge regression parameters
 
 # Split Data Set
 kf = KFold(n_splits = 10) # regular 10-fold Cross Validation
-rkf = RepeatedKFold(n_splits=10, n_repeats = 150, random_state = 999) # Repeated 10-fold cross validation
+rkf = RepeatedKFold(n_splits=10, n_repeats = 10, random_state = 999) # Repeated 10-fold cross validation
 
 for _lambda in lambdas:
     rmse = [] # Root Mean Squared Error for single CV Iteration, reset to zero each time before running the 10-fold cross validation
+    iteration = 0
     for train, test in rkf.split(x): # Creates the Cross Validation Folds
         x_train = x[train]
         y_train = y[train]
@@ -46,6 +46,7 @@ for _lambda in lambdas:
         clf.fit(x_train, y_train) # Fit Training Data of Cross Validation
         y_pred = clf.predict(x_val) # Predict output on test data of Cross Validation
         rmse.append(np.sqrt(mean_squared_error(y_val, y_pred))) # Calculate the RMSE for this iteration and append to list
+        iteration = iteration+1
         
     avg_rmse = np.mean(rmse) # after iterating through all 10 different folds, average over the sum of the rmse_values
     rmse_lambdas.append(avg_rmse) # create vector containing the average RMSE for the different lambda-values
