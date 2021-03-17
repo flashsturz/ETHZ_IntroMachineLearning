@@ -38,40 +38,59 @@ train_data=data('Data_1a/train.csv',0,1)
 
 ownscore=make_scorer(own_scoring)
 
-score=np.array([])
-report=pd.DataFrame(data=None, columns=["Lambda","Solver","Tolerance","Score","ElapsedTime [s]"])
+score_all=pd.DataFrame(data=None,columns=["Lambda=0.1","Lambda=1","Lambda=10","Lambda=100","Lambda=200"])
+report=pd.DataFrame(data=None, columns=["Lambda","Solver","Tolerance","Score","Repeats","ElapsedTime [s]"])
 
 totaltime_start=time.perf_counter()
 
-CV_lambda=[0.1,1,10,100,200]
-for _lambda in CV_lambda:
-    time_start=time.perf_counter()
-    linmod=Ridge(alpha=_lambda, max_iter=5000)
+Rep_list=range(1,150,10)
+Rep_list=[5,10]
+for repeats in Rep_list:
+    CV_lambda=[0.1,1,10,100,200]
+    score = np.array([])
+    for _lambda in CV_lambda:
+        time_start=time.perf_counter()
+        linmod=Ridge(alpha=_lambda, max_iter=5000)
 
-    parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
-    #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,5e-5,1e-4,3e-4,7e-4,1e-3,3e-3,5e-3,7e-3,9e-3,1e-2,3e-2,5e-2,7e-2] }
+        parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
+        #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,5e-5,1e-4,3e-4,7e-4,1e-3,3e-3,5e-3,7e-3,9e-3,1e-2,3e-2,5e-2,7e-2] }
 
-    rkf = RepeatedKFold(n_splits=10, n_repeats=100,random_state=999)
-    gscv = GridSearchCV(linmod, param_grid=parameters,cv=rkf,scoring=ownscore)
-    gscv.fit(train_data.X,train_data.y)
+        rkf = RepeatedKFold(n_splits=10, n_repeats=repeats,random_state=999)
+        gscv = GridSearchCV(linmod, param_grid=parameters,cv=rkf,scoring=ownscore,verbose=-1)
+        gscv.fit(train_data.X,train_data.y)
 
-    this_results=pd.Series(gscv.cv_results_)
-    time_end = time.perf_counter()
-    this_bestscore=this_results['mean_test_score'][np.argmin(this_results['mean_test_score'])]
-    ind_minscore=np.argmin(this_results['mean_test_score'])
+        this_results=pd.Series(gscv.cv_results_)
+        time_end = time.perf_counter()
 
-    solver=this_results['params'][ind_minscore]
-    score=np.append(score,this_bestscore)
-    thisreport = {'Lambda': _lambda, 'Solver': solver['solver'], 'Tolerance': solver['tol'], 'Score': this_bestscore, 'ElapsedTime [s]': time_end-time_start}
+        this_bestscore=this_results['mean_test_score'][np.argmin(this_results['mean_test_score'])]
+        solver=this_results['params'][np.argmin(this_results['mean_test_score'])]
+        score=np.append(score,this_bestscore)
 
-    report=report.append(thisreport, ignore_index=True)
+        thisreport = {'Lambda': _lambda, 'Solver': solver['solver'], 'Tolerance': solver['tol'], 'Score': this_bestscore, 'Repeats': repeats, 'ElapsedTime [s]': time_end-time_start}
 
-    #print('Best Score for Lambda= %.1f was = %.9f Using %s.' % (_lambda,this_bestscore,solver) )
+        report=report.append(thisreport, ignore_index=True)
 
-pd.DataFrame(score).to_csv("output.csv",header=None,index=None)
+        #print('Best Score for Lambda= %.1f was = %.9f Using %s.' % (_lambda,this_bestscore,solver) )
+
+    name_outputfile="output"+str(repeats)+".csv"
+    pd.DataFrame(score).to_csv(name_outputfile,header=None,index=None)
+
+    public_score=np.sum(score)-26
+
+    this_scoreall= {'Lambda=0.1': score[0],'Lambda=1': score[1],'Lambda=10': score[2],'Lambda=100': score[3],'Lambda=200': score[4], 'ScoreEstim': public_score, 'Repeats': repeats}
+    score_all=score_all.append(this_scoreall,ignore_index=True)
 
 totaltime_end=time.perf_counter()
-print(report)
+#print(report)
+#print(score_all)
+
+best_rep=score_all['Repeats'][np.argmin(score_all['ScoreEstim'])]
+
+#print(best_rep)
+
+pd.DataFrame(score).to_csv("report.csv")
+pd.DataFrame(score).to_csv("score.csv")
+
 totaltime=totaltime_end-totaltime_start
-pd.DataFrame(report).to_csv("report.csv")
-print('Best scores were saved in ouput.csv. Total time: %s' % str(datetime.timedelta(seconds=totaltime)) )
+print('Estimated Best scores at %.0f repeats.' % best_rep)
+print('Report was saved in report.csv, Best scores in score.csv. Total time: %s' % str(datetime.timedelta(seconds=totaltime)) )
