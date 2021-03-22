@@ -44,15 +44,16 @@ report=pd.DataFrame(data=None, columns=["Lambda","Solver","Tolerance","Score","R
 totaltime_start=time.perf_counter()
 
 Rep_list=range(1,150,10)
-
+#Rep_list=[2,4]
 for repeats in Rep_list:
     CV_lambda=[0.1,1,10,100,200]
     score = np.array([])
+    print("Starting with repeats=%i ..." % repeats)
     for _lambda in CV_lambda:
         time_start=time.perf_counter()
         linmod=Ridge(alpha=_lambda, max_iter=5000)
 
-        #parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-3]}
+        #parameters = {'solver': ['sparse_cg'], 'tol': [1e-3]}
         parameters = {'solver': ['svd', 'cholesky', 'lsqr', 'sparse_cg', 'saga'], 'tol': [1e-5,1e-4,1e-3,5e-3,1e-2] }
 
         rkf = RepeatedKFold(n_splits=10, n_repeats=repeats,random_state=999)
@@ -72,6 +73,7 @@ for repeats in Rep_list:
 
         #print('Best Score for Lambda= %.1f was = %.9f Using %s.' % (_lambda,this_bestscore,solver) )
 
+    print("Finished Repeats= %i, storing results..." % repeats)
     name_outputfile="output"+str(repeats)+".csv"
     pd.DataFrame(score).to_csv(name_outputfile,header=None,index=None)
 
@@ -88,8 +90,8 @@ best_rep=score_all['Repeats'][np.argmin(score_all['ScoreEstim'])]
 
 #print(best_rep)
 
-pd.DataFrame(score).to_csv("report.csv")
-pd.DataFrame(score).to_csv("score.csv")
+pd.DataFrame(report).to_csv("report.csv")
+pd.DataFrame(score_all).to_csv("score.csv")
 
 totaltime=totaltime_end-totaltime_start
 print('Estimated Best scores at %.0f repeats.' % best_rep)
