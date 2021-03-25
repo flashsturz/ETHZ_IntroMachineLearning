@@ -41,22 +41,39 @@ ownscore=make_scorer(own_scoring)
 
 Phi=prepare_data(train_data.X)
 
-rkf = RepeatedKFold(n_splits=10, n_repeats=10,random_state=999)
-regr=ElasticNet(random_state=1234)
-parameters={'l1_ratio':[0.1,0.3,0.5,0.7,0.9,0.95,0.98,0.99],'alpha':[0.001,0.01,0.1,0.25,0.5,1,10,100]}
+rkf = RepeatedKFold(n_splits=10, n_repeats=5,random_state=999)
 
-gscv = GridSearchCV(regr, param_grid=parameters,cv=rkf,scoring=ownscore,verbose=-1)
+Error=0
+
+report=pd.DataFrame(data=None, columns=["Error"])
+
+for train_index, test_index in rkf.split(Phi):
+    X_train = Phi[train_index, :]
+    y_train = train_data.y[train_index]
+    X_test = Phi[test_index, :]
+    y_test = train_data.y[test_index]
+
+    regr=ElasticNet(alpha=0.5,l1_ratio=0.5)
+    regr.fit(X_train, y_train)
+
+    y_pred = regr.predict(X_test)
+
+    Error = Error + own_scoring(y_test, y_pred)
+
+meanError=Error/50
+print(meanError)
+#report = report.append({'alpha_': meanError': meanError}, ignore_index=True)
+
+
+parameters={'alpha':[0.5],'l1_ratio':[0.5]}
+
+engscv=ElasticNet(max_iter=1000)
+gscv=GridSearchCV(engscv,param_grid=parameters,scoring=ownscore,cv=rkf)
 gscv.fit(Phi,train_data.y)
 
-pd.DataFrame(gscv.cv_results_).to_csv("output.csv")
-best_estim=gscv.best_estimator_
-print("Best Estimator Parameters found by GridSearch:")
-print(gscv.best_params_)
-
-print(best_estim.coef_)
-pd.DataFrame(gscv.best_estimator_.coef_).to_csv("Estimtor_coef.csv")
-
-regrbest=ElasticNetCV(l1_ratio=[0.1,0.3,0.5,0.7,0.9,0.95,0.98,0.99],random_state=4321)
-regrbest.fit(Phi,train_data.y)
-
-print(regrbest.coef_)
+gscv_meanError=gscv.error_score
+print(gscv_meanError)
+gscv_BestError=gscv.best_score_
+print(gscv_BestError)
+#bestestim_gscv.fit(Phi,train_data.y)
+#print(bestestim_gscv.coef_)
