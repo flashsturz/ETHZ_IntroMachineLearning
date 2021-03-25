@@ -43,37 +43,12 @@ Phi=prepare_data(train_data.X)
 
 rkf = RepeatedKFold(n_splits=10, n_repeats=5,random_state=999)
 
-Error=0
+encv=ElasticNetCV(l1_ratio=[0.01,0.1,0.3,0.4,0.5,0.75,0.90,0.95,0.99],cv=rkf,random_state=1234)
+encv.fit(Phi,train_data.y)
 
-report=pd.DataFrame(data=None, columns=["Error"])
+pd.DataFrame(encv.coef_).to_csv("Coef.csv",header=None,index=None)
 
-for train_index, test_index in rkf.split(Phi):
-    X_train = Phi[train_index, :]
-    y_train = train_data.y[train_index]
-    X_test = Phi[test_index, :]
-    y_test = train_data.y[test_index]
-
-    regr=ElasticNet(alpha=0.5,l1_ratio=0.5)
-    regr.fit(X_train, y_train)
-
-    y_pred = regr.predict(X_test)
-
-    Error = Error + own_scoring(y_test, y_pred)
-
-meanError=Error/50
-print(meanError)
-#report = report.append({'alpha_': meanError': meanError}, ignore_index=True)
-
-
-parameters={'alpha':[0.5],'l1_ratio':[0.5]}
-
-engscv=ElasticNet(max_iter=1000)
-gscv=GridSearchCV(engscv,param_grid=parameters,scoring=ownscore,cv=rkf)
-gscv.fit(Phi,train_data.y)
-
-gscv_meanError=gscv.error_score
-print(gscv_meanError)
-gscv_BestError=gscv.best_score_
-print(gscv_BestError)
-#bestestim_gscv.fit(Phi,train_data.y)
-#print(bestestim_gscv.coef_)
+print("Alphas: ")
+print(np.shape(encv.alphas_))
+print("Score:")
+print(np.shape(encv.mse_path_))
