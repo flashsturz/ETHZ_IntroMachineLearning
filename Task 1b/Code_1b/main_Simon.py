@@ -41,14 +41,12 @@ ownscore=make_scorer(own_scoring)
 
 Phi=prepare_data(train_data.X)
 
-rkf = RepeatedKFold(n_splits=10, n_repeats=5,random_state=999)
+rkf = RepeatedKFold(n_splits=10, n_repeats=10,random_state=999)
 
-encv=ElasticNetCV(l1_ratio=[0.01,0.1,0.3,0.4,0.5,0.75,0.90,0.95,0.99],cv=rkf,random_state=1234)
+encv=ElasticNetCV(l1_ratio=[0.001,0.01,0.05,0.1,0.3,0.4,0.5,0.75,0.90,0.95,0.99],cv=rkf,random_state=1234,max_iter=10000)
 encv.fit(Phi,train_data.y)
 
 pd.DataFrame(encv.coef_).to_csv("Coef.csv",header=None,index=None)
 
-print("Alphas: ")
-print(np.shape(encv.alphas_))
-print("Score:")
-print(np.shape(encv.mse_path_))
+print("Best Params: ")
+print(encv.get_params())

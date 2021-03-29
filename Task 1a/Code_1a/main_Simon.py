@@ -27,9 +27,13 @@ class data:
         self.X=self.np_data[:,xcol_start:]
         self.y=self.np_data[:,ycol]
 
+def las_scoring(y, y_pred, **kwargs):
+    return sqrt(mean_squared_error(y, y_pred))
 #----------------------------------------------------------------------------------------------------------------------
 # Read in Data
 train_data=data('Data_1a/train.csv',0,1)
+
+ownscore=make_scorer(las_scoring)
 
 score=np.array([])
 
