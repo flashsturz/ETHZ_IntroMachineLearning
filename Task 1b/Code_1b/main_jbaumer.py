@@ -31,7 +31,7 @@ def prepare_data(linear_X):
     return Phi
 
 # Read in Data
-train_data=data('../Data_1b/train.csv',1,2)
+train_data=data('../Data_1b_new/train.csv',1,2)
 
 x_train = train_data.X[0:600]
 y_train = train_data.y[0:600]
@@ -63,7 +63,7 @@ dict_i_RMSE = {}
 #for i in iterations:
 
     # Lasso
-#    clf = linear_model.Lasso(alpha=0.01, tol=0.000001, max_iter=i)
+#    clf = linear_model.LassoCV(alpha=0.01, tol=0.000001, max_iter=i)
 #    clf.fit(Phi_train, y_train)
 #    ypred = clf.predict(Phi_test)
 #    print(clf.coef_)
