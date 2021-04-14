@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import sklearn.metrics as metrics
+import sys
 
 VITALS = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 TESTS = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total',
@@ -19,7 +20,8 @@ def get_score(df_true, df_submission):
     return score
 
 
-filename = 'sample.zip'
+filename = sys.argv[1]
+print(filename)
 df_submission = pd.read_csv(filename)
 
 # generate a baseline based on sample.zip
