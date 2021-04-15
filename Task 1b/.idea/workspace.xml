@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="918f00e1-0922-4972-9277-f37dbdeaff13" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.~lock.30_03_2021_09_56_09_report.csv#" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code_1b/main_Simon.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code_1b/main_Simon.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +21,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Task 1a/Code_1a/main_Simon.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Task 2" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
