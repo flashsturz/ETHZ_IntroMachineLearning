@@ -9,12 +9,12 @@ import pandas as pd
 
 def prepare_Xmat(features_pd):
     list_pid = features_pd.pid.unique() #get list of all pid's in data
-    X=np.empty((0,370))
+    X=np.empty((0,420))
 
     i=0
     for pid in list_pid:#[1,10,100,1000,10000,10002,10006,10007,1001,10010]: #
         append_X=features_pd.loc[features_pd['pid'] == pid].to_numpy()
-        append_X=append_X[2:].flatten()
+        append_X=append_X[:,2:].flatten()
         X=np.vstack((X,append_X))
 
         #i=i+1
@@ -48,7 +48,8 @@ def prepare_Ymat(labels_pd):
 #This function saves the X matrix to a csv for usage in the Estimator function.
 
 #VARIABLES
-FEATURE_MATRIX_FILE=[{'name': 'mean_train',
+FEATURE_MATRIX_FILE=[{
+                      'name': 'mean_train',
                       'FILE_PATH':'train_features_simpleImpute_mean.csv',
                       'filename_output': 'X_MAT_train_features_simpleIMP_mean_12h_on1line.csv'},
                      {'name': 'median_train',
@@ -68,7 +69,6 @@ FEATURE_MATRIX_FILE=[{'name': 'mean_train',
                       'filename_output': 'X_MAT_test_simpleIMP_constant_12h_on1line.csv'}] # set of csv-files contraining the features, in provided structure form problem statement
 
 print('Execution starts...')
-
 for feature_file in FEATURE_MATRIX_FILE:
     print('Starting with %s' % feature_file['name'])
 
