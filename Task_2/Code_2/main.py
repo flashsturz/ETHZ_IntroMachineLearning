@@ -91,9 +91,20 @@ def print_elapsed_time(starttime):
 data_import_active = True
 # use gradient data
 use_gradients = True
+# read in Data with different Impute Methods
+use_different_imputer = True
 
 print(f'Starts. Data Import = {data_import_active}, Use Gradients = {use_gradients}')
 totaltime_start=time.perf_counter()
+
+if use_different_imputer:
+    train_data_reduced_simon_mean = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_train_features_simpleIMP_mean_12h_on1line.csv', dtype=float, delimiter=',')
+    train_data_reduced_simon_median = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_train_features_simpleIMP_median_12h_on1line.csv', dtype=float, delimiter=',')
+    train_data_reduced_simon_constant = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_train_simpleIMP_constant_12h_on1line.csv', dtype=float, delimiter=',')
+    
+    test_data_reduced_simon_mean = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_test_simpleIMP_mean_12h_on1line.csv', dtype=float, delimiter=',')
+    test_data_reduced_simon_median = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_test_simpleIMP_median_12h_on1line.csv', dtype=float, delimiter=',')
+    test_data_reduced_simon_constant = np.genfromtxt('../Data_2/Different_Imputation_Methods/X_MAT_test_simpleIMP_constant_12h_on1line.csv', dtype=float, delimiter=',')
 
 # Read in Data and Processing
 if data_import_active or not (os.path.isfile('../Data_2/train_features_imp.csv') and os.path.isfile('../Data_2/train_features_reduced.csv')):
@@ -164,7 +175,7 @@ x_train_2, x_val_2, y_train_2, y_val_2 = train_test_split(train_data_reduced_wit
 x_train_3, x_val_3, y_train_3, y_val_3 = train_test_split(train_data_reduced_withGrad, Y3, test_size = 0.2)
 
 ###### TASK 1 ########
-print("TASK 1: Fit Multilabel Classifier starts. Set up Pipeline")
+print("TASK 1: Fit Multilabel Classifier starts. Set up Pipeline and Cross Validate with n_cv = 5")
 print_elapsed_time(totaltime_start)
 ## Binary Classification for multiple labels with scoring function AUC
 # SVC works a bit less well than MLPClassifier and takes longer to train.
@@ -173,6 +184,37 @@ pipe_1_mlp = make_pipeline(StandardScaler(), MLPClassifier(solver = 'adam', acti
 
 #result_1_svc = pipeCV(pipe_1_svc, train_data_reduced_withGrad[:, 2:], Y1[:, 1:], 5)
 result_1_mlp = pipeCV(pipe_1_mlp, train_data_reduced_withGrad[:, 2:], Y1[:, 1:], 5)
+
+if use_different_imputer:
+    print("TASK 1: Testing with different imputation methods")
+    print("Approaches Simon: Simple Impute (Mean, Median, Const.)")
+    print_elapsed_time(totaltime_start)
+    
+    pipe_1_mlp_simon = make_pipeline(StandardScaler(), MLPClassifier(solver = 'adam', activation='logistic', random_state=42, max_iter = 150))
+    pipe_1_mlp_simon_nonStandardized = make_pipeline(MLPClassifier(solver = 'adam', activation='logistic', random_state=42, max_iter = 150))
+    
+    print("Cross Validation with Imputation method: MEAN")
+    print_elapsed_time(totaltime_start)
+    result_1_mlp_simon_mean = pipeCV(pipe_1_mlp_simon, train_data_reduced_simon_mean, Y1[:, 1:], 5)
+    result_1_mlp_simon_mean_nonStandardized = pipeCV(pipe_1_mlp_simon_nonStandardized, train_data_reduced_simon_mean, Y1[:, 1:], 5)
+    simon_mean_test_score_average = np.mean(result_1_mlp_simon_mean['test_score'])
+    simon_mean_nonStandardized_test_score_average = np.mean(result_1_mlp_simon_mean_nonStandardized['test_score'])
+    
+    print("Cross Validation with Imputation method: MEDIAN")
+    print_elapsed_time(totaltime_start)
+    result_1_mlp_simon_median = pipeCV(pipe_1_mlp_simon, train_data_reduced_simon_median, Y1[:, 1:], 5)
+    result_1_mlp_simon_median_nonStandardized = pipeCV(pipe_1_mlp_simon_nonStandardized, train_data_reduced_simon_median, Y1[:, 1:], 5)
+    simon_median_test_score_average = np.mean(result_1_mlp_simon_median['test_score'])
+    simon_median_nonStandardized_test_score_average = np.mean(result_1_mlp_simon_median_nonStandardized['test_score'])
+    
+    print("Cross Validation with Imputation method: CONSTANT")
+    print_elapsed_time(totaltime_start)
+    result_1_mlp_simon_constant = pipeCV(pipe_1_mlp_simon, train_data_reduced_simon_constant, Y1[:, 1:], 5)
+    result_1_mlp_simon_constant_nonStandardized = pipeCV(pipe_1_mlp_simon_nonStandardized, train_data_reduced_simon_constant, Y1[:, 1:], 5)
+    simon_constant_test_score_average = np.mean(result_1_mlp_simon_constant['test_score'])
+    simon_constant_nonStandardized_test_score_average = np.mean(result_1_mlp_simon_constant_nonStandardized['test_score'])
+    
+
 print("TASK 1: Crossvalidation complete. Fit Estimator")
 print_elapsed_time(totaltime_start)
 
@@ -180,6 +222,28 @@ mlp_test_score = result_1_mlp['test_score']
 avg_test_score = np.mean(mlp_test_score)
 pipe_1_mlp.fit(train_data_reduced_withGrad[:, 2:], Y1[:, 1:])
 
+if use_different_imputer:
+    print("Fitting Simon Data")
+    print_elapsed_time(totaltime_start)
+    pipe_1_mlp_simon.fit(train_data_reduced_simon_constant, Y1[:, 1:])
+    pipe_1_mlp_simon_nonStandardized.fit(train_data_reduced_simon_constant, Y1[:, 1:])
+    
+    task_1_output_simon_const = pipe_1_mlp_simon.predict_proba(test_data_reduced_simon_constant)
+    task_1_output_simon_const_nonStandardized = pipe_1_mlp_simon_nonStandardized.predict_proba(test_data_reduced_simon_constant)
+    
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst.csv', task_1_output_simon_const, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst_nonStandardized.csv', task_1_output_simon_const_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+    
+    pipe_1_mlp_simon.fit(train_data_reduced_simon_mean, Y1[:, 1:])
+    pipe_1_mlp_simon_nonStandardized.fit(train_data_reduced_simon_mean, Y1[:, 1:])
+    
+    task_1_output_simon_mean = pipe_1_mlp_simon.predict_proba(test_data_reduced_simon_constant)
+    task_1_output_simon_mean_nonStandardized = pipe_1_mlp_simon_nonStandardized.predict_proba(test_data_reduced_simon_constant)
+    
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean.csv', task_1_output_simon_mean, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean_nonStandardized.csv', task_1_output_simon_mean_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+
+    
 print("TASK 1: Fit complete, calculate Prediction Probability Output")
 print_elapsed_time(totaltime_start)
 task_1_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
