@@ -25,7 +25,7 @@ print(filename)
 df_submission = pd.read_csv(filename)
 
 # generate a baseline based on sample.zip
-df_true = pd.read_csv(filename)
+df_true = pd.read_csv("Data_2/sample.csv")
 for label in TESTS + ['LABEL_Sepsis']:
     # round classification labels
     df_true[label] = np.around(df_true[label].values)
