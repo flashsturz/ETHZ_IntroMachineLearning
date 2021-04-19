@@ -23,7 +23,7 @@ def md_list2pdSeries(inputlist,pd_col_list,name):
 
     pd_dataframe=pd.DataFrame(data=stackedList,columns=pd_col_list)
 
-    filename="train_features_simpleImpute_"+name+".csv"
+    filename="test_features_simpleImpute_"+name+".csv"
     pd_dataframe.to_csv(filename,index=False)
 
 def print_elapsed_time(starttime):
@@ -32,11 +32,13 @@ def print_elapsed_time(starttime):
     print("Time elapsed since start: %.2f s" % elapsed_time)
 
 #--------------------------------------------------------------------------------------------------
+strat='median'
+
 
 print("Starts. Reading in Data...")
 totaltime_start=time.perf_counter()
 
-fulldata=pd.read_csv('Data_2/train_features.csv')
+fulldata=pd.read_csv('Data_2/test_features.csv')
 
 random.seed(1234)
 
@@ -74,17 +76,18 @@ print_elapsed_time(totaltime_start)
 for pid in range(n_pid):
     this_pid = md_list[:,:,pid]
 
-    #Check if there is a col with all nan-values:
-    #isnan_bool=np.all(np.isnan(this_pid),axis=0)
-    #for isnan_col in range(np.shape(isnan_bool)[0]):
-        #if isnan_bool[isnan_col]:
-            #If all nan: isnan_col is true thus set one entry of col to avg over all patients:
-            #this_pid[2,isnan_col]=avg_fulldata[isnan_col]
+    if (strat!='constant'):
+        #Check if there is a col with all nan-values:
+        isnan_bool=np.all(np.isnan(this_pid),axis=0)
+        for isnan_col in range(np.shape(isnan_bool)[0]):
+            if isnan_bool[isnan_col]:
+                #If all nan: isnan_col is true thus set one entry of col to avg over all patients:
+                this_pid[2,isnan_col]=avg_fulldata[isnan_col]
 
     #print(np.shape(this_pid)) #for debugging
 
     #Imputers:
-    imp_mean = SimpleImputer(missing_values=np.nan,strategy="constant")
+    imp_mean = SimpleImputer(missing_values=np.nan,strategy=strat)
 
     this_pid_impmean=imp_mean.fit_transform(this_pid)
     #print(this_pid_impmean)
@@ -99,8 +102,8 @@ print("Imputing finished, starting to write the multidimensional lists to csv's.
 print_elapsed_time(totaltime_start)
 
 
-md_list2pdSeries(md_list_impmean,fulldata.columns.tolist(),"constant")
-print("Finished writing median-file...")
+md_list2pdSeries(md_list_impmean,fulldata.columns.tolist(),strat)
+print("Finished writing imputed Data to file...")
 print_elapsed_time(totaltime_start)
 
 print("Finished Execution, new Datasets in correspondig Files.")
