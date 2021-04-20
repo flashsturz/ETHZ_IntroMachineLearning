@@ -123,15 +123,21 @@ acer_list=[{'name_of_compute': 'mean',
               'Xmat_file_given': False,
              'FILE_FEATURE':'ImputedFiles/train_features_simpleImpute_constant.csv',
              'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'}] #TODO:Add other imp methods.
+             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'}
+           {'name_of_compute': 'IterativIMP',
+            'Xmat_file_given': False,
+            'FILE_FEATURE': 'ImputedFiles/train_features_imp.csv',
+            'FILE_LABELS': 'Data_2/train_labels.csv',
+            'TEST_FEATURES': 'ImputedFiles/test_features_imp.csv'}
+           ] #TODO:Add other imp methods.
 
 importfiles=acer_list
 
 
-ALPHAS=[0.75,1]
-L1_RATIO=[0.09,0.1,0.2]
+ALPHAS=[0.1,0.5,1,2,5]
+L1_RATIO=[0.09,0.1,0.15,0.2,0.9,0.99]
 
-KFOLD_SPLITS=2
+KFOLD_SPLITS=10
 KFOLD_REPEATS=1
 
 verbose=1
