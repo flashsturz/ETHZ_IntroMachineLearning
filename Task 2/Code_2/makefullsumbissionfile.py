@@ -79,7 +79,7 @@ full_submission_pd['pid'] = np.array(list_pid).T
 # for col in COL_SUBTASK1:
 #    print(subtask1_pd[col])
 full_submission_pd[COL_SUBTASK1] = subtask1_pd[COL_SUBTASK1]
-# full_submission_pd[COL_SUBTASK2] = subtask2_pd[COL_SUBTASK2]
+full_submission_pd[COL_SUBTASK2] = subtask2_pd[COL_SUBTASK2]
 full_submission_pd[COL_SUBTASK3] = subtask3_pd[COL_SUBTASK3]
 
 pd.DataFrame(full_submission_pd).to_csv("Submissionfiles/full_submission" + current_time_str + ".csv",
