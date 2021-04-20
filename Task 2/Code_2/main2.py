@@ -144,8 +144,8 @@ print(f"df train labels sepsis after scaling: \n{df_train_labels_sepsis}")
 
 # uniques = df_train_labels_sepsis.LABEL_Sepsis.unique()
 # print(f"unique values: {uniques}")
-# print("how many ones: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 1].shape[0])
-# print("how many zeroes: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 0].shape[0])
+# print("number of ones: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 1].shape[0])
+# print("number of zeroes: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 0].shape[0])
 
 
 print()
@@ -182,9 +182,9 @@ param_grid_forest = {
 }
 
 
-model_svc = SVC()
-model_LR = LogisticRegression()
-model_forest = DecisionTreeClassifier()
+model_svc = SVC(random_state=42)
+model_LR = LogisticRegression(random_state=42)
+model_forest = DecisionTreeClassifier(random_state=42)
 2
 # grid = GridSearchCV(estimator= model_forest, param_grid = param_grid_forest, scoring='roc_auc') #, scoring= roc_auc_score)
 grid = GridSearchCV(estimator= model_LR, param_grid = param_grid_LogRegr, scoring='roc_auc', n_jobs=2) #, scoring= roc_auc_score)
@@ -237,125 +237,4 @@ print("first elements of Y pred: ", Y_pred[0:20])
 
 #task_2_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
 
-# np.savetxt('../Data_2/Task_2_Subtask_2_Predictions.csv', task_2_output, fmt='%.3f', delimiter = ',', header = 'LABEL_Sepsis', comments='')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""
-print()
-print("list of col names (train features): ")
-print(list(df_train_features.columns))
-print()
-print("list of col names (test features): ")
-print(list(df_test_features.columns))
-print(df_train_labels_sepsis_repeated.head())
-"""
-
-
-"""
-
-
-clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-clf.fit(X_train, Y_train)
-Y_test = clf.predict(X_test)
-
-print("y test type", Y_test.shape)
-print()
-print("y test: \n", Y_test)
-"""
-
-"""
-#SVC
-clf = SVC(kernel='linear')
-clf.fit(X_train, Y_train)
-y_pred = clf.predict(X_test)
-print("type of y predict: \n", type(y_pred))
-print(f"y predict: \n {y_pred}")
-dec_fct_output = clf.decision_function(X_test)
-print("type of dec fct output: \n", type(dec_fct_output))
-print(f"dec fct output: \n {dec_fct_output}")
-
-
-#SVM = svm.LinearSVC()
-#SVM.fit(df_train_features, df_train_labels_sepsis_repeated)
-#y_pred_SVM = SVM.predict(df_test_features)
-"""
-
-
-"""
-clf = make_pipeline(StandardScaler(), SVC(gamma='auto'))
-clf.fit(X_train, Y_train)
-y_pred = clf.predict(X_test)
-print("type of y predict: \n", y_pred)
-"""
-
-
-"""
-LR does not converge
-LR = LogisticRegression(random_state=42, solver='sag', multi_class='ovr').fit(df_train_features, df_train_labels_sepsis_repeated)
-y_pred_LR = LR.predict(df_test_features)
-print("type y pred LR: ", type(y_pred_LR), " / ", "and length: ", len(y_pred_LR))
-print("y pred LR: \n", y_pred_LR)
-"""
-
-
-"""
-dectree = tree.DecisionTreeClassifier()
-dectree = dectree.fit(df_train_features, df_train_labels_sepsis_repeated)
-y_pred_dectree = dectree.predict(df_test_features)
-print("type y pred SVM: ", type(y_pred_dectree), " / ", "and length: ", len(y_pred_dectree))
-print("y pred Decision Tree: \n", y_pred_dectree)
-"""
-
-
-
-
-"""
-# next steps
-# loop over 12 elements, compromise to one single value (if more 1 -> 1, else 0)
-# so that we have one value per Versuchsperson
-
-
-#task2 = metrics.roc_auc_score(df_true['LABEL_Sepsis'], y_pred_dectree['LABEL_Sepsis'])
-
-print(f"execution time: {datetime.now() - start}")
-
-x_train_2, y_train_2 =
-x_train_2, x_validate_2, y_train_2, y_validate_2 = train_test_split(train_data_reduced_withGrad, Y2, test_size = 0.2)
-
-
-# from Flavio:
-# Binary Classification for Sepsis Risk
-clf_2 = make_pipeline(StandardScaler(), SVC(gamma='auto', class_weight = 'balanced', random_state = 42, probability = True))
-clf_2.fit(x_train_2[:, 2:], y_train_2[:, 1])
-y_pred_val_2 = clf_2.predict(x_val_2[:,2:])
-y_pred_val_2_proba = clf_2.predict_proba(x_val_2[:, 2:])
-sigmoid_2 = 1/(1 + np.exp(-clf_2.decision_function(x_val_2[:,2:])))
-
-score_pred = roc_auc_score(y_val_2[:, 1], y_pred_val)
-score_proba = roc_auc_score(y_val_2[:, 1], y_pred_val_proba[:, 1])
-score_dec_func = roc_auc_score(y_val_2[:, 1], sigmoid_2)
-"""
-
-
-print(f"Done full script: \n Time elapsed: {datetime.now() - start}")
+# np.savetxt('../Data_2_new/Task_2_Subtask_2_Predictions.csv', task_2_output, fmt='%.3f', delimiter = ',', header = 'LABEL_Sepsis', comments='')
