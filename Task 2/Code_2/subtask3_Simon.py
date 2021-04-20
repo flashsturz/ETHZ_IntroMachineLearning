@@ -69,9 +69,11 @@ def compute_Estimator(X_train,Y_train,KFOLD_SPLITS,KFOLD_REPEATS,starttime,verbo
         print("Regression starts...")
         print_elapsed_time(starttime)
 
-    ENreg = ElasticNet(random_state=1234,max_iter=10e4,tol=5e-4)
-    rkf = RepeatedKFold(n_splits=KFOLD_SPLITS, n_repeats=KFOLD_REPEATS, random_state=1234)
+    ENreg = ElasticNet(random_state=1234,max_iter=10e5,tol=1e-4)
     paramgrid = {'l1_ratio': L1_RATIO, 'alpha': ALPHAS}
+
+    rkf = RepeatedKFold(n_splits=KFOLD_SPLITS, n_repeats=KFOLD_REPEATS, random_state=1234)
+
     if (verbose >= 1):
         print("The following parameter Grid is used for regression: ")
         print(paramgrid)
@@ -107,11 +109,16 @@ importfiles=[{'name_of_compute': 'mean',
              'FILE_FEATURE':'train_features_simpleImpute_constant.csv',
              'FILE_LABELS': 'Data_2/train_labels.csv',
              'TEST_FEATURES': 'test_features_simpleImpute_constant.csv'}]
+importfiles=[{'name_of_compute': 'mean',
+              'Xmat_file_given': False,
+              'FILE_FEATURE':'train_features_simpleImpute_mean.csv',
+              'FILE_LABELS': 'Data_2/train_labels.csv',
+             'TEST_FEATURES':'test_features_simpleImpute_mean.csv'}]
 
 
 
-ALPHAS=[0.01,0.1,1,10,33,66,100]
-L1_RATIO=[0.01,0.1,0.9,0.99]
+ALPHAS=[0.75,1]
+L1_RATIO=[0.09,0.1,0.2]
 
 KFOLD_SPLITS=2
 KFOLD_REPEATS=1

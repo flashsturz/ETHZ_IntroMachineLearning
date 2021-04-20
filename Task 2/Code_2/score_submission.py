@@ -18,16 +18,3 @@ def get_score(df_true, df_submission):
     score = np.mean([task1, task2, task3])
     print(task1, task2, task3)
     return score
-
-
-filename = sys.argv[1]
-print(filename)
-df_submission = pd.read_csv(filename)
-
-# generate a baseline based on sample.zip
-df_true = pd.read_csv("Data_2/sample.csv")
-for label in TESTS + ['LABEL_Sepsis']:
-    # round classification labels
-    df_true[label] = np.around(df_true[label].values)
-
-print('Score of sample.zip with itself as groundtruth', get_score(df_true, df_submission))
