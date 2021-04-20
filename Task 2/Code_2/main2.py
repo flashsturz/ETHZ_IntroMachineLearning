@@ -44,7 +44,7 @@ start = datetime.now()
 # 5) schreibe grid.cv_results, grid.best_estimator_ / grid.best_score_ / grid.best_params / grid.best_index / grid.scorer_ / grid.n_splits_
 #    in ein file
 #
-# 6) verkleinere Grid,
+# 6) verkleinere Grid, optimieren
 #
 ################################
 
@@ -80,14 +80,8 @@ def scale_data(dataframe):
 def sigmoid(x):
  return 1/(1 + np.exp(-x))
 
-#def print_df_shema(df1, df2, df3):
-#    print('sizes: \n',
-#          "train features: \t\t", df1.shape, "\n", type(df1),
-#          "train labels (sepsis): ", df2.shape, "\n", type(df2),
-#          "test features: \t\t", df3.shape, type(df3))
 
-working_dir_path = '/Users/janikbaumer/Documents/Studium/Master_2_sem/IML/' \
-                   'Project/zueriost/ETHZ_IntroMachineLearning/Task 2/Data_2_new'
+working_dir_path = '../Data_2_new'
 
 # define files
 file_train_features_imputed = 'train_features_imp.csv'
@@ -95,7 +89,7 @@ file_train_features_imputed_reduced = 'train_features_reduced.csv'
 file_train_features_imputed_reduced_grad = 'train_features_reduced_withGrad.csv'
 file_train_labels = 'train_labels.csv'
 file_test_features_imputed = 'test_features_imp.csv' # ToDo: get reduced file
-
+file_to_write = 'Task_2_Subtask_2_Predictions.csv'
 
 # setup
 setup(working_dir_path)
@@ -215,16 +209,26 @@ print("Grid Search all CV Results: \n", grid.cv_results_)
 
 
 Y_pred_decfct = grid.decision_function(X_train)
-Y_pred_decfct = sigmoid(Y_pred_decfct)
+Y_pred_decfct_sigmoid = sigmoid(Y_pred_decfct)
 Y_pred = grid.predict(X_train)
 
-print("type y_pred_decfct after sigmoid: ", type(Y_pred_decfct))
-print(Y_pred_decfct[0:20])
+print("type y_pred_decfct after sigmoid: ", type(Y_pred_decfct_sigmoid))
+print(Y_pred_decfct_sigmoid[0:20])
 print()
 print("type y pred: ", type(Y_pred))
 print(Y_pred[0:20])
 
 
+task_2_output = Y_pred_decfct_sigmoid
+print('type output: ', type(task_2_output))
+
+
+write_time = str(datetime.now())
+np.savetxt(write_time+file_to_write, task_2_output, fmt='%.3f', delimiter=',', header='LABEL_Sepsis', comments='')
+
+
+##task_2_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
+## np.savetxt('../Data_2_new/Task_2_Subtask_2_Predictions.csv', task_2_output, fmt='%.3f', delimiter = ',', header = 'LABEL_Sepsis', comments='')
 
 """
 print("Y pred prob after predict proba: ", Y_pred_prob.shape)
@@ -235,6 +239,4 @@ print("Y pred after predict: ", Y_pred.shape)
 print("first elements of Y pred: ", Y_pred[0:20])
 """
 
-#task_2_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
-
-# np.savetxt('../Data_2_new/Task_2_Subtask_2_Predictions.csv', task_2_output, fmt='%.3f', delimiter = ',', header = 'LABEL_Sepsis', comments='')
+print(datetime.now()-start)
