@@ -15,6 +15,8 @@ from sklearn.kernel_ridge import KernelRidge
 from sklearn.linear_model import ElasticNet, ElasticNetCV
 from sklearn.model_selection import RepeatedKFold
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score, make_scorer
+
 from datetime import datetime
 import sys
 
@@ -25,6 +27,11 @@ def print_elapsed_time(starttime):
     time_now=time.perf_counter()
     elapsed_time=time_now-starttime
     print("    Time elapsed since start: %.2f s" % elapsed_time)
+
+def task3_score(y, y_pred, **kwargs):
+    return np.mean(0.5 + 0.5 * np.maximum(0, r2_score(y, y_pred)))
+
+task3_scorer=make_scorer(task3_score,)
 
 def prepare_Xmat(features_pd):
     list_pid = features_pd.pid.unique() #get list of all pid's in data
@@ -78,7 +85,7 @@ def compute_Estimator(X_train,Y_train,KFOLD_SPLITS,KFOLD_REPEATS,starttime,verbo
         print("The following parameter Grid is used for regression: ")
         print(paramgrid)
 
-    gscv = GridSearchCV(ENreg, param_grid=paramgrid, scoring='neg_root_mean_squared_error', n_jobs=4, cv=rkf)
+    gscv = GridSearchCV(ENreg, param_grid=paramgrid, scoring=task3_scorer, n_jobs=4, cv=rkf)
     if (verbose >= 1):
         print("  Finished regression-prep, fit and predict starts:")
         print_elapsed_time(starttime)
@@ -95,26 +102,30 @@ def compute_Estimator(X_train,Y_train,KFOLD_SPLITS,KFOLD_REPEATS,starttime,verbo
 #--------------------------------------------------------------------------------------------------
 #VARIABLES
 #---------
-FILE_FEATURES='train_features_simpleImpute_mean.csv'
-FILE_LABELS='Data_2/train_labels.csv'
-TEST_FEATURES='test_features_simpleImpute_constant.csv'
 
-importfiles=[{'name_of_compute': 'mean',
+big_list=[{'name_of_compute': 'mean',
               'Xmat_file_given': False,
-              'FILE_FEATURE':'train_features_simpleImpute_mean.csv',
+              'FILE_FEATURE':'ImputedFiles/train_features_simpleImpute_mean.csv',
               'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES':'test_features_simpleImpute_mean.csv'},
+             'TEST_FEATURES':'ImputedFiles/test_features_simpleImpute_mean.csv'},
              {'name_of_compute': 'constant',
               'Xmat_file_given': False,
-             'FILE_FEATURE':'train_features_simpleImpute_constant.csv',
+             'FILE_FEATURE':'ImputedFiles/train_features_simpleImpute_constant.csv',
              'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES': 'test_features_simpleImpute_constant.csv'}]
-importfiles=[{'name_of_compute': 'mean',
-              'Xmat_file_given': False,
-              'FILE_FEATURE':'train_features_simpleImpute_mean.csv',
-              'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES':'test_features_simpleImpute_mean.csv'}]
+             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'}]
 
+acer_list=[{'name_of_compute': 'mean',
+              'Xmat_file_given': False,
+              'FILE_FEATURE':'ImputedFiles/train_features_simpleImpute_mean.csv',
+              'FILE_LABELS': 'Data_2/train_labels.csv',
+             'TEST_FEATURES':'ImputedFiles/test_features_simpleImpute_mean.csv'},
+             {'name_of_compute': 'constant',
+              'Xmat_file_given': False,
+             'FILE_FEATURE':'ImputedFiles/train_features_simpleImpute_constant.csv',
+             'FILE_LABELS': 'Data_2/train_labels.csv',
+             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'}] #TODO:Add other imp methods.
+
+importfiles=acer_list
 
 
 ALPHAS=[0.75,1]
