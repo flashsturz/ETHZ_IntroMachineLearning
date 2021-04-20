@@ -48,14 +48,7 @@ start = datetime.now()
 #
 ################################
 
-#['pid','LABEL_BaseExcess','LABEL_Fibrinogen','LABEL_AST','LABEL_Alkalinephos',\
-#'LABEL_Bilirubin_total','LABEL_Lactate','LABEL_TroponinI','LABEL_SaO2',\
-#'LABEL_Bilirubin_direct','LABEL_EtCO2','LABEL_Sepsis','LABEL_RRate',\
-#'LABEL_ABPm','LABEL_SpO2','LABEL_Heartrate']
-
-
 # definition of functions:
-
 def setup(path):
     os.chdir(path) # os.getcwd() would now get current path (here: 'path')
     np.set_printoptions(threshold=np.inf) # print np.arrays completely
@@ -80,7 +73,10 @@ def scale_data(dataframe):
 def sigmoid(x):
  return 1/(1 + np.exp(-x))
 
+estim = 'SVC' # set either to LR, SVC, forest
+scaling = False # set either true or false
 
+# define path
 working_dir_path = '../Data_2_new'
 
 # define files
@@ -102,7 +98,7 @@ df_train_labels_sepsis = get_train_label_sepsis(file_train_labels)
 print(f"Done reading data: \n Time elapsed: {datetime.now() - start} \n")
 
 
-
+# print shapes and types
 print('sizes: \n',
       "train features: \t\t", df_train_features.shape, type(df_train_features), "\n",
       "train labels (sepsis) : \t", df_train_labels_sepsis.shape, type(df_train_labels_sepsis), "\n",
@@ -110,16 +106,16 @@ print('sizes: \n',
 print()
 
 
-
-#print(f"df train features: \n, {df_train_features}")
-#print()
-#print(f"df train labels sepsis: \n{df_train_labels_sepsis}")
-
 # Scaling:
 print(f"Start Scaling data: \n Time elapsed: {datetime.now() - start}")
+
 # get scaled features
-X_train = scale_data(df_train_features)
-X_test = scale_data(df_test_features)
+if scaling == True:
+    X_train = scale_data(df_train_features)
+    X_test = scale_data(df_test_features)
+else:
+    X_train = df_train_features.to_numpy()
+    X_test = df_test_features.to_numpy()
 # get labels (non-scaled)
 Y_train = df_train_labels_sepsis.to_numpy()
 #print("Y BEFORE RAVEL: \n", Y_train[0:20, :])
@@ -128,20 +124,16 @@ Y_train =  Y_train.ravel()
 print(f"Done Scaling data: \n Time elapsed: {datetime.now() - start} \n")
 
 
-
-
-print(f"df train features after scaling: \n, {df_train_features}")
-print()
-print(f"df train labels sepsis after scaling: \n{df_train_labels_sepsis}")
-
-##### X_train_temp, X_validation, Y_train_temp, Y_validation = train_test_split(X_train_prep, Y_train, test_size=0.2)
+#print(f"df train features after scaling: \n, {df_train_features}")
+#print()
+#print(f"df train labels sepsis after scaling: \n{df_train_labels_sepsis}")
 
 # uniques = df_train_labels_sepsis.LABEL_Sepsis.unique()
 # print(f"unique values: {uniques}")
 # print("number of ones: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 1].shape[0])
 # print("number of zeroes: ", df_train_labels_sepsis[df_train_labels_sepsis.LABEL_Sepsis == 0].shape[0])
 
-
+# print shapes and types
 print()
 print('sizes: \n',
       "X train: \t", X_train.shape, type(X_train), "\n",
@@ -156,87 +148,79 @@ print('sizes: \n',
 #}
 
 
-param_grid_SVC = {
-    'C' : [0.01],
-    'kernel' : ['linear'],
-    'degree' : [3],
-    'probability' : [True]
-}
-
-param_grid_LogRegr = {
-    'penalty' : ['l2'],
-    'solver' : ['liblinear', 'newton-cg'],
-    'max_iter' : np.linspace(100, 200, 3), #[50000, 70000, 1000000, 120000, 150000],
-    'C' : [0.1, 1, 10]
-}
-
-param_grid_forest = {
-    'criterion' : ['gini', 'entropy'],
-    'max_depth' : [2, 4, 6, 8, 10, 12]
-}
 
 
-model_svc = SVC(random_state=42)
-model_LR = LogisticRegression(random_state=42)
-model_forest = DecisionTreeClassifier(random_state=42)
-2
-# grid = GridSearchCV(estimator= model_forest, param_grid = param_grid_forest, scoring='roc_auc') #, scoring= roc_auc_score)
-grid = GridSearchCV(estimator= model_LR, param_grid = param_grid_LogRegr, scoring='roc_auc', n_jobs=2) #, scoring= roc_auc_score)
-# grid = GridSearchCV(estimator= model_svc, param_grid = param_grid_SVC, scoring='roc_auc') #, scoring= roc_auc_score)
 
+
+
+# todo: set estimator variable, choose grid depending on variable
+
+if estim == 'forest':
+    param_grid_forest = {
+        'criterion': ['gini', 'entropy'],
+        'max_depth': [2, 4, 6, 8, 10, 12]
+    }
+    model_forest = DecisionTreeClassifier(random_state=42)
+    grid = GridSearchCV(estimator= model_forest, param_grid = param_grid_forest, scoring='roc_auc') #, scoring= roc_auc_score)
+
+elif estim == 'LR':
+    param_grid_LogRegr = {
+        'penalty': ['l2'],
+        'solver': ['liblinear', 'newton-cg'],
+        'max_iter': np.linspace(10, 200, 5),  # [50000, 70000, 1000000, 120000, 150000],
+        'C': [0.1, 1, 10, 20, 30, 40]
+    }
+    model_LR = LogisticRegression(random_state=42)
+    grid = GridSearchCV(estimator= model_LR, param_grid = param_grid_LogRegr, scoring='roc_auc', n_jobs=-1) #, scoring= roc_auc_score)
+
+elif estim == 'SVC':
+    param_grid_SVC = {
+        'C': [10, 20, 40],
+        'kernel': ['linear', 'rbf', 'poly'],
+        'degree': [2, 3],
+        'probability': [True],
+        'class_weight' : ['balanced']
+    }
+    model_svc = SVC(random_state=42)
+    grid = GridSearchCV(estimator= model_svc, param_grid = param_grid_SVC, scoring='roc_auc') #, scoring= roc_auc_score)
+
+else:
+    print("Variable <estim> has non-allowed value")
+
+# get full grid to be looped over
 print(f"grid: \n {grid}")
 
+# Grid Search CV, fitting
 print(f"Start fitting Grid Search CV: \n Time elapsed: {datetime.now() - start}")
 print("Fitting...")
 grid.fit(X_train, Y_train) # todo: check if id in X_train - ev delete
 print(f"Done fitting Grid Search CV: \n Time elapsed: {datetime.now() - start}")
+print(f"(model used: {estim})")
 
+# Grid Search CV, print Best Score, Best Estimator (and all Results)
 print()
 print("Grid Search Best Score: \n", grid.best_score_)
 print("Grid Search Best Estimator: \n", grid.best_estimator_)
-#print("Grid Search Best Estimator: \n", grid.best_estimator_)
 print()
+# print("Grid Search all CV Results: \n", grid.cv_results_)
 
 
-print("Grid Search all CV Results: \n", grid.cv_results_)
-
-
-
-
-
-
-
-
-
-Y_pred_decfct = grid.decision_function(X_train)
+# get Y pred based on X test
+Y_pred_decfct = grid.decision_function(X_test)
 Y_pred_decfct_sigmoid = sigmoid(Y_pred_decfct)
-Y_pred = grid.predict(X_train)
+Y_pred = grid.predict(X_test)
 
+# get type and first elements of actual Y and Y after sigmoid
 print("type y_pred_decfct after sigmoid: ", type(Y_pred_decfct_sigmoid))
 print(Y_pred_decfct_sigmoid[0:20])
 print()
 print("type y pred: ", type(Y_pred))
 print(Y_pred[0:20])
 
-
+# writing the Sigmoid Function to file
 task_2_output = Y_pred_decfct_sigmoid
 print('type output: ', type(task_2_output))
-
-
 write_time = str(datetime.now())
 np.savetxt(write_time+file_to_write, task_2_output, fmt='%.3f', delimiter=',', header='LABEL_Sepsis', comments='')
 
-
-##task_2_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
-## np.savetxt('../Data_2_new/Task_2_Subtask_2_Predictions.csv', task_2_output, fmt='%.3f', delimiter = ',', header = 'LABEL_Sepsis', comments='')
-
-"""
-print("Y pred prob after predict proba: ", Y_pred_prob.shape)
-
-print("first elements of Y pred prob after sigmoid: \n", Y_pred_prob[0:20, :])
-
-print("Y pred after predict: ", Y_pred.shape)
-print("first elements of Y pred: ", Y_pred[0:20])
-"""
-
-print(datetime.now()-start)
+print("Script Execution Time: ", datetime.now()-start)
