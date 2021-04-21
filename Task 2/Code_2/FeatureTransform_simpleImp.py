@@ -56,7 +56,7 @@ def simple_imputer_iml2(strat, features_pd):
 
     md_list_imp = md_list
 
-    print("Finished prep. Imputing starts...")
+    # print("Finished prep. Imputing starts...")
 
     for pid in range(n_pid):
         this_pid = md_list[:, :, pid]
@@ -67,12 +67,18 @@ def simple_imputer_iml2(strat, features_pd):
             for isnan_col in range(np.shape(isnan_bool)[0]):
                 if isnan_bool[isnan_col]:
                     # If all nan: isnan_col is true thus set one entry of col to avg over all patients:
-                    this_pid[2, isnan_col] = avg_fulldata[isnan_col]
+                    if np.isnan(avg_fulldata[isnan_col]):
+                        this_pid[2, isnan_col]=0
+                    else:
+                        this_pid[2, isnan_col] = avg_fulldata[isnan_col]
 
         # Imputers:
+        np.savetxt('test_save_thispid.csv',this_pid,delimiter=',')
         imputer = SimpleImputer(missing_values=np.nan, strategy=strat)
 
         this_pid_imp = imputer.fit_transform(this_pid)
+        np.savetxt('test_save_thispid_imp.csv',this_pid_imp,delimiter=',')
+
 
         # write imputed person data to the multi dimensional list
 
@@ -81,7 +87,7 @@ def simple_imputer_iml2(strat, features_pd):
         # The md_list_imp needs to be written back to a pandas dataframe in the same shape as before.
         features_imp_pd = md_list2pdSeries(md_list_imp, fulldata.columns.tolist())
 
-        return features_imp_pd
+    return features_imp_pd
 
 
 def simpleimp_mean(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
@@ -92,7 +98,7 @@ def simpleimp_mean(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
     train_features_simpleimp = simple_imputer_iml2('mean', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('mean', test_features_pd)
 
-    return train_features_simpleimp, test_features_simpleimp
+    return test_features_simpleimp, train_features_simpleimp
 
 
 def simpleimp_median(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
@@ -104,7 +110,7 @@ def simpleimp_median(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
     train_features_simpleimp = simple_imputer_iml2('median', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('median', test_features_pd)
 
-    return train_features_simpleimp, test_features_simpleimp
+    return test_features_simpleimp, train_features_simpleimp
 
 
 def simpleimp_constant(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
@@ -115,7 +121,7 @@ def simpleimp_constant(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
     train_features_simpleimp = simple_imputer_iml2('constant', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('constant', test_features_pd)
 
-    return train_features_simpleimp, test_features_simpleimp
+    return test_features_simpleimp, train_features_simpleimp
 
 # --------------------------------------------------------------------------------------------------
 # CODE
