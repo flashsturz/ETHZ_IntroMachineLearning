@@ -76,7 +76,7 @@ def prepare_Ymat(labels_pd):
 def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, verbose=1):
     if verbose >= 1:
         print("Regression starts...")
-        print_elapsed_time(starttime)
+        # print_elapsed_time(starttime)
 
     ALPHAS = [1]
     L1_RATIO = [0.1]
@@ -93,11 +93,11 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
     gscv = GridSearchCV(ENreg, param_grid=paramgrid, scoring=task3_scorer, n_jobs=4, cv=rkf)
     if verbose >= 1:
         print("  Finished regression-prep, fit and predict starts:")
-        print_elapsed_time(starttime)
+        # print_elapsed_time(starttime)
     gscv.fit(X_train, y=Y_train)
     if verbose >= 1:
         print("   Fit finished...")
-        print_elapsed_time(starttime)
+        # print_elapsed_time(starttime)
 
     gcsv_results_pd = pd.DataFrame(gscv.cv_results_)
 
