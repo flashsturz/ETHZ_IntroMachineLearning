@@ -51,7 +51,7 @@ def sigmoid(x):
  return 1/(1 + np.exp(-x))
 
 
-def main(df_train_X, df_train_Y, df_test_X):
+def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     """
     :param df_train_X: pandas df - without id, only one row per patient
     :param df_train_Y: pandas df (not a Series) - only one column named "LABEL_Sepsis"
