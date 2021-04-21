@@ -86,10 +86,8 @@ def simple_imputer_iml2(strat, features_pd):
     return features_imp_pd
 
 
-def simpleimp_mean(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
+def simpleimp_mean(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using mean strategy and return pd_frames
-    test_features_pd = pd.read_csv(PATH_TEST_FEATURES)
-    train_features_pd = pd.read_csv(PATH_TRAIN_FEATURES)
 
     train_features_simpleimp = simple_imputer_iml2('mean', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('mean', test_features_pd)
@@ -97,11 +95,8 @@ def simpleimp_mean(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
     return test_features_simpleimp, train_features_simpleimp
 
 
-def simpleimp_median(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
+def simpleimp_median(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using median strategy and return pd_frames
-
-    test_features_pd = pd.read_csv(PATH_TEST_FEATURES)
-    train_features_pd = pd.read_csv(PATH_TRAIN_FEATURES)
 
     train_features_simpleimp = simple_imputer_iml2('median', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('median', test_features_pd)
@@ -109,10 +104,8 @@ def simpleimp_median(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
     return test_features_simpleimp, train_features_simpleimp
 
 
-def simpleimp_constant(PATH_TEST_FEATURES, PATH_TRAIN_FEATURES):
+def simpleimp_constant(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using constant (0) strategy and return pd_frames
-    test_features_pd = pd.read_csv(PATH_TEST_FEATURES)
-    train_features_pd = pd.read_csv(PATH_TRAIN_FEATURES)
 
     train_features_simpleimp = simple_imputer_iml2('constant', train_features_pd)
     test_features_simpleimp = simple_imputer_iml2('constant', test_features_pd)

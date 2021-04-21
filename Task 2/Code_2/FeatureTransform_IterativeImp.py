@@ -106,8 +106,8 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
         train_data_imp = imputer.fit_transform(train_data)
         test_data_imp = imputer.transform(test_data)  # Transform test_data with same rules as train data
 
-        np.savetxt('../Data_2/train_features_iterImp.csv', train_data_imp, fmt=('%.3f'), delimiter=',', comments='', )
-        np.savetxt('../Data_2/test_features_iterImp.csv', test_data_imp, fmt=('%.3f'), delimiter=',', comments='', )
+        #np.savetxt('../Data_2/train_features_iterImp.csv', train_data_imp, fmt=('%.3f'), delimiter=',', comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
+        #np.savetxt('../Data_2/test_features_iterImp.csv', test_data_imp, fmt=('%.3f'), delimiter=',', comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
         #        if os.path.isfile('../Data_2/train_features_iterImp.csv'):
         #            print("Imputed Data Set found, read in File")
         #            train_data_imp = np.genfromtxt('../Data_2/train_features_imp.csv', dtype=float, delimiter=',')
@@ -122,10 +122,10 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
         #        if not os.path.isfile('../Data_2/train_features_iterImp_reduced.csv'):
         print("No Reduced Data Set found, compute reduced set...")
         train_data_reduced, test_data_reduced = combineHourlyMeasurementsPerPatient(train_data_imp, test_data_imp)
-        np.savetxt('../Data_2/train_features_iterImp_reduced.csv', train_data_reduced, fmt=('%.3f'), delimiter=',',
-                   comments='', )
-        np.savetxt('../Data_2/test_features_iterImp_reduced.csv', test_data_reduced, fmt=('%.3f'), delimiter=',',
-                   comments='', )
+        #np.savetxt('../Data_2/train_features_iterImp_reduced.csv', train_data_reduced, fmt=('%.3f'), delimiter=',',
+        #           comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
+        #np.savetxt('../Data_2/test_features_iterImp_reduced.csv', test_data_reduced, fmt=('%.3f'), delimiter=',',
+        #           comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
         #        else:
         #            print("Reduced Data Set found, read in Data...")
         #            train_data_reduced = np.genfromtxt('../Data_2/train_features_iterImp_reduced.csv', dtype=float, delimiter=',')

@@ -1,7 +1,7 @@
 # Janik Baumer, Flavio Regenass, Simon Tobler
 # jbaumer, flavior, sitobler
 # -----------------
-# Description Task 2
+# Description Task 3
 
 # --------------------------------------------------------------------------------------------------
 # IMPORTS
@@ -17,13 +17,11 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import r2_score, make_scorer
 
 from datetime import datetime
-import sys
 
 
 # --------------------------------------------------------------------------------------------------
 # FUNCTIONS
 # ---------
-
 
 def print_elapsed_time(starttime):
     time_now = time.perf_counter()
@@ -34,9 +32,7 @@ def print_elapsed_time(starttime):
 def task3_score(y, y_pred, **kwargs):
     return np.mean(0.5 + 0.5 * np.maximum(0, r2_score(y, y_pred)))
 
-
-task3_scorer = make_scorer(task3_score, )
-
+task3_scorer = make_scorer(task3_score)
 
 def prepare_Xmat(features_pd):
     list_pid = features_pd.pid.unique()  # get list of all pid's in data
@@ -82,6 +78,9 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
         print("Regression starts...")
         print_elapsed_time(starttime)
 
+    ALPHAS = [1]
+    L1_RATIO = [0.1]
+
     ENreg = ElasticNet(random_state=1234, max_iter=10e5, tol=1e-4)
     paramgrid = {'l1_ratio': L1_RATIO, 'alpha': ALPHAS}
 
@@ -104,128 +103,37 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
 
     return gcsv_results_pd, gscv.best_estimator_
 
-
-# --------------------------------------------------------------------------------------------------
-# VARIABLES
-# ---------
-
-big_list = [{'name_of_compute': 'mean',
-             'Xmat_file_given': False,
-             'FILE_FEATURE': 'ImputedFiles/train_features_simpleImpute_mean.csv',
-             'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_mean.csv'},
-            {'name_of_compute': 'constant',
-             'Xmat_file_given': False,
-             'FILE_FEATURE': 'ImputedFiles/train_features_simpleImpute_constant.csv',
-             'FILE_LABELS': 'Data_2/train_labels.csv',
-             'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'}]
-
-acer_list = [{'name_of_compute': 'mean',
-              'Xmat_file_given': False,
-              'FILE_FEATURE': 'ImputedFiles/train_features_simpleImpute_mean.csv',
-              'FILE_LABELS': 'Data_2/train_labels.csv',
-              'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_mean.csv'},
-             {'name_of_compute': 'constant',
-              'Xmat_file_given': False,
-              'FILE_FEATURE': 'ImputedFiles/train_features_simpleImpute_constant.csv',
-              'FILE_LABELS': 'Data_2/train_labels.csv',
-              'TEST_FEATURES': 'ImputedFiles/test_features_simpleImpute_constant.csv'},
-             {'name_of_compute': 'IterativIMP',
-              'Xmat_file_given': False,
-              'FILE_FEATURE': 'ImputedFiles/train_features_imp.csv',
-              'FILE_LABELS': 'Data_2/train_labels.csv',
-              'TEST_FEATURES': 'ImputedFiles/test_features_imp.csv'}
-             ]
-
-importfiles = acer_list
-
-ALPHAS = [1]
-L1_RATIO = [0.1]
-
-KFOLD_SPLITS = 2
-KFOLD_REPEATS = 1
-
-verbose = 1
-
-current_time_str = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
-
-# --------------------------------------------------------------------------------------------------
-# CODE
-# ----
-time_start_overall = time.perf_counter()
-
-Is_first_execution = True
-for strat in importfiles:
-
-    print('Starting with some strat...')
-    print(strat['name_of_compute'])
-
-    FILE_FEATURES = strat['FILE_FEATURE']
-    FILE_LABELS = strat['FILE_LABELS']
-    TEST_FEATURES = strat['TEST_FEATURES']
-
-    if strat['Xmat_file_given']:
-        X_train = pd.read_csv(FILE_FEATURES).to_numpy()
-        X_test = pd.read_csv(TEST_FEATURES).to_numpy()
-    else:
-        data_features = pd.read_csv(FILE_FEATURES)
-        test_features = pd.read_csv(TEST_FEATURES)
-
-        if verbose >= 1:
-            print("Starting to prepare X matrices...")
-            print_elapsed_time(time_start_overall)
-
-        X_train = prepare_Xmat(data_features)
-        del data_features
-        X_test = prepare_Xmat(test_features)
-        del test_features
-
-    data_labels = pd.read_csv(FILE_LABELS)
-    Y_train = prepare_Ymat(data_labels)
+def solveSubtask3(train_features_pd,test_features_pd,train_labels_pd,start_time,verbose=1):
 
     if verbose >= 1:
-        print("Finished to prepare X and Y matrices,Shape of X_train and Y_train is: ")
-        print(np.shape(X_train))
-        print(np.shape(Y_train))
+        print("Subtask3 starts...")
+        print("Starting to prepare things...")
+
+    X_train = prepare_Xmat(train_features_pd)
+    X_test = prepare_Xmat(test_features_pd)
+    Y_train = prepare_Ymat(train_labels_pd)
+
+    if verbose >= 1:
+        print("Preparation finished. Regression starts... ")
+
+    KFOLD_SPLITS = 2
+    KFOLD_REPEATS = 1
 
     [this_gscv_results, best_estim] = compute_Estimator(X_train,
                                                         Y_train,
                                                         KFOLD_SPLITS,
                                                         KFOLD_REPEATS,
-                                                        time_start_overall,
+                                                        start_time,
                                                         1)
 
-    # Predicting the test-labels and printing them to a csv-file:
-    #   Using best_estim given by compute_Estimator()
-    #   and provided Test_features in X_test.
-
     Y_predict = best_estim.predict(X_test)
-
-    if verbose >= 1:
-        print("   predict finished. Preparing result files and outputs...")
-        print_elapsed_time(time_start_overall)
 
     # Creating array of predicted labels
     [y_row, y_col] = np.shape(Y_predict)
     labels_predict_np = np.zeros((y_row, 16))
     labels_predict_np[:, 12:] = Y_predict
-    # Print to file:
-    labels_predict_pd = pd.DataFrame(labels_predict_np, columns=data_labels.columns)
-    labels_predict_pd.to_csv("predictedLabels_" + current_time_str + "_" + strat['name_of_compute'] + ".csv",
-                             index=False)
 
-    # append GridSearch_results:
-    this_gscv_results['Name'] = strat['name_of_compute']
-    if Is_first_execution:
-        gscv_results = this_gscv_results
-        Is_first_execution = False
-    else:
-        gscv_results = gscv_results.append(this_gscv_results)
+    # Output
+    labels_predict_pd = pd.DataFrame(labels_predict_np, columns=train_labels_pd.columns)
 
-    print('Finished this Strat.')
-
-gscv_results['overall_ranking'] = gscv_results['mean_test_score'].rank(method='min')
-pd.DataFrame(gscv_results).to_csv("gscv_results_" + current_time_str + ".csv")
-
-print('Finished full execution.')
-print_elapsed_time(time_start_overall)
+    return labels_predict_pd
