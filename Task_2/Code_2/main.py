@@ -231,8 +231,8 @@ if use_different_imputer:
     task_1_output_simon_const = pipe_1_mlp_simon.predict_proba(test_data_reduced_simon_constant)
     task_1_output_simon_const_nonStandardized = pipe_1_mlp_simon_nonStandardized.predict_proba(test_data_reduced_simon_constant)
     
-    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst.csv', task_1_output_simon_const, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
-    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst_nonStandardized.csv', task_1_output_simon_const_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst.csv', task_1_output_simon_const, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess,LABEL_Fibrinogen,LABEL_AST,LABEL_Alkalinephos,LABEL_Bilirubin_total,LABEL_Lactate,LABEL_TroponinI,LABEL_SaO2,LABEL_Bilirubin_direct,LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitConst_nonStandardized.csv', task_1_output_simon_const_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess,LABEL_Fibrinogen,LABEL_AST,LABEL_Alkalinephos,LABEL_Bilirubin_total,LABEL_Lactate,LABEL_TroponinI,LABEL_SaO2,LABEL_Bilirubin_direct,LABEL_EtCO2', comments='')
     
     pipe_1_mlp_simon.fit(train_data_reduced_simon_mean, Y1[:, 1:])
     pipe_1_mlp_simon_nonStandardized.fit(train_data_reduced_simon_mean, Y1[:, 1:])
@@ -240,15 +240,15 @@ if use_different_imputer:
     task_1_output_simon_mean = pipe_1_mlp_simon.predict_proba(test_data_reduced_simon_constant)
     task_1_output_simon_mean_nonStandardized = pipe_1_mlp_simon_nonStandardized.predict_proba(test_data_reduced_simon_constant)
     
-    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean.csv', task_1_output_simon_mean, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
-    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean_nonStandardized.csv', task_1_output_simon_mean_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean.csv', task_1_output_simon_mean, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess,LABEL_Fibrinogen,LABEL_AST,LABEL_Alkalinephos,LABEL_Bilirubin_total,LABEL_Lactate,LABEL_TroponinI,LABEL_SaO2,LABEL_Bilirubin_direct,LABEL_EtCO2', comments='')
+    np.savetxt('../Data_2/Different_Imputation_Methods/Prediction_simon_fitMean_nonStandardized.csv', task_1_output_simon_mean_nonStandardized, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess,LABEL_Fibrinogen,LABEL_AST,LABEL_Alkalinephos,LABEL_Bilirubin_total,LABEL_Lactate,LABEL_TroponinI,LABEL_SaO2,LABEL_Bilirubin_direct,LABEL_EtCO2', comments='')
 
     
 print("TASK 1: Fit complete, calculate Prediction Probability Output")
 print_elapsed_time(totaltime_start)
 task_1_output = pipe_1_mlp.predict_proba(test_data_reduced_withGrad[:, 2:])
 
-np.savetxt('../Data_2/Task_2_Subtask_1_Predictions.csv', task_1_output, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess, LABEL_Fibrinogen, LABEL_AST, LABEL_Alkalinephos, LABEL_Bilirubin_total, LABEL_Lactate, LABEL_TroponinI, LABEL_SaO2, LABEL_Bilirubin_direct, LABEL_EtCO2', comments='')
+np.savetxt('../Data_2/Task_2_Subtask_1_Predictions.csv', task_1_output, fmt='%.5f', delimiter = ',', header = 'LABEL_BaseExcess,LABEL_Fibrinogen,LABEL_AST,LABEL_Alkalinephos,LABEL_Bilirubin_total,LABEL_Lactate,LABEL_TroponinI,LABEL_SaO2,LABEL_Bilirubin_direct,LABEL_EtCO2', comments='')
 # print(f'Task 1 Validation ROC AUC Score: {roc_auc_score(y_val_1[:, 1:], pipe_1_mlp.predict_proba(x_val_1[:, 2:]))}')
 
 ########################## GridSearch CV #################
@@ -313,14 +313,13 @@ print_elapsed_time(totaltime_start)
 
 ###### TASK 2 ########
 # Binary Classification for Sepsis Risk
-#clf_2 = make_pipeline(StandardScaler(), SVC(gamma='auto', class_weight = 'balanced', random_state = 42, probability = True))
-#clf_2.fit(x_train_2[:, 2:], y_train_2[:, 1])
-#y_pred_val_2 = clf_2.predict(x_val_2[:,2:])
-#y_pred_val_2_proba = clf_2.predict_proba(x_val_2[:, 2:])
-#sigmoid_2 = 1/(1 + np.exp(-clf_2.decision_function(x_val_2[:,2:])))
+clf_2 = make_pipeline(StandardScaler(), SVC(gamma='auto', class_weight = 'balanced', random_state = 42, probability = True))
+clf_2.fit(x_train_2[:, 2:], y_train_2[:, 1])
+y_pred_val_2 = clf_2.predict(x_val_2[:,2:])
+confidence_score_2 = clf_2.decision_function(x_val_2[:,2:])
+sigmoid_2 = 1/(1 + np.exp(-clf_2.decision_function(x_val_2[:,2:])))
 #
-#score_pred = roc_auc_score(y_val_2[:, 1], y_pred_val)
-#score_proba = roc_auc_score(y_val_2[:, 1], y_pred_val_proba[:, 1])
+#score_pred = roc_auc_score(y_val_2[:, 1], y_pred_val_2)
 #score_dec_func = roc_auc_score(y_val_2[:, 1], sigmoid_2)
 
 
