@@ -1,0 +1,94 @@
+Start reading data: 
+ Time elapsed: 0:00:00.000102
+Done reading data: 
+ Time elapsed: 0:00:00.714968 
+
+sizes: 
+ train features: 		 (18995, 37) <class 'pandas.core.frame.DataFrame'> 
+ train labels (sepsis) : 	 (18995, 1) <class 'pandas.core.frame.DataFrame'> 
+ test features: 		 (151968, 37) <class 'pandas.core.frame.DataFrame'>
+
+Start Scaling data: 
+ Time elapsed: 0:00:00.715002
+Done Scaling data: 
+ Time elapsed: 0:00:00.851327 
+
+df train features after scaling: 
+,             0     1     2       3   ...     33     34       35     36
+0          1.0   8.5  34.0  33.239  ...  1.831  6.962  114.500  7.372
+1         10.0   6.5  71.0  32.833  ...  1.557  6.735  132.084  7.377
+2        100.0   7.5  68.0  32.465  ...  1.691  7.169  117.390  7.366
+3       1000.0   6.5  79.0  31.952  ...  1.606  6.982  140.390  7.364
+4      10000.0   6.5  76.0  33.368  ...  1.638  7.190  123.032  7.377
+...        ...   ...   ...     ...  ...    ...    ...      ...    ...
+18990   9993.0   6.5  80.0  32.780  ...  1.415  7.879  101.643  7.370
+18991   9995.0   6.5  73.0  32.572  ...  1.621  7.259  175.428  7.371
+18992   9996.0  12.5  53.0  32.836  ...  1.708  7.198   99.250  7.381
+18993   9998.0   6.5  89.0  32.878  ...  1.604  6.387  130.956  7.371
+18994   9999.0   6.5  85.0  32.441  ...  1.563  7.425  127.761  7.374
+
+[18995 rows x 37 columns]
+
+df train labels sepsis after scaling: 
+       LABEL_Sepsis
+0               0.0
+1               0.0
+2               0.0
+3               0.0
+4               0.0
+...             ...
+18990           0.0
+18991           0.0
+18992           0.0
+18993           0.0
+18994           0.0
+
+[18995 rows x 1 columns]
+
+sizes: 
+ X train: 	 (18995, 37) <class 'numpy.ndarray'> 
+ X test: 	 (151968, 37) <class 'numpy.ndarray'> 
+ Y train: 	 (18995,) <class 'numpy.ndarray'>
+grid: 
+ GridSearchCV(estimator=LogisticRegression(),
+             param_grid={'C': [1], 'max_iter': [100000, 1000000],
+                         'penalty': ['l2'],
+                         'solver': ['liblinear', 'newton-cg', 'sag']})
+Start fitting Grid Search CV: 
+ Time elapsed: 0:00:00.909532
+Fitting...
+Done fitting Grid Search CV: 
+ Time elapsed: 0:03:00.491347
+
+Grid Search Best Score: 
+ 0.942405896288497
+Grid Search Best Estimator: 
+ LogisticRegression(C=1, max_iter=100000, solver='liblinear')
+
+Grid Search all CV Results: 
+ {'mean_fit_time': array([ 0.2529654 ,  0.48642011, 17.42368164,  0.2489161 ,  0.28801117,
+       17.13880258]), 'std_fit_time': array([0.02813778, 0.13093295, 9.56530301, 0.02731193, 0.01620397,
+       9.42689253]), 'mean_score_time': array([0.00105886, 0.00111141, 0.00084519, 0.00095296, 0.00084882,
+       0.00084548]), 'std_score_time': array([6.83018922e-05, 6.55948963e-04, 7.44690805e-06, 1.85366420e-05,
+       9.50176740e-05, 7.27590693e-05]), 'param_C': masked_array(data=[1, 1, 1, 1, 1, 1],
+             mask=[False, False, False, False, False, False],
+       fill_value='?',
+            dtype=object), 'param_max_iter': masked_array(data=[100000, 100000, 100000, 1000000, 1000000, 1000000],
+             mask=[False, False, False, False, False, False],
+       fill_value='?',
+            dtype=object), 'param_penalty': masked_array(data=['l2', 'l2', 'l2', 'l2', 'l2', 'l2'],
+             mask=[False, False, False, False, False, False],
+       fill_value='?',
+            dtype=object), 'param_solver': masked_array(data=['liblinear', 'newton-cg', 'sag', 'liblinear',
+                   'newton-cg', 'sag'],
+             mask=[False, False, False, False, False, False],
+       fill_value='?',
+            dtype=object), 'params': [{'C': 1, 'max_iter': 100000, 'penalty': 'l2', 'solver': 'liblinear'}, {'C': 1, 'max_iter': 100000, 'penalty': 'l2', 'solver': 'newton-cg'}, {'C': 1, 'max_iter': 100000, 'penalty': 'l2', 'solver': 'sag'}, {'C': 1, 'max_iter': 1000000, 'penalty': 'l2', 'solver': 'liblinear'}, {'C': 1, 'max_iter': 1000000, 'penalty': 'l2', 'solver': 'newton-cg'}, {'C': 1, 'max_iter': 1000000, 'penalty': 'l2', 'solver': 'sag'}], 'split0_test_score': array([0.94209002, 0.94209002, 0.94209002, 0.94209002, 0.94209002,
+       0.94209002]), 'split1_test_score': array([0.94209002, 0.94209002, 0.94209002, 0.94209002, 0.94209002,
+       0.94209002]), 'split2_test_score': array([0.94261648, 0.94261648, 0.94261648, 0.94261648, 0.94261648,
+       0.94261648]), 'split3_test_score': array([0.94261648, 0.94261648, 0.94261648, 0.94261648, 0.94261648,
+       0.94261648]), 'split4_test_score': array([0.94261648, 0.94261648, 0.94261648, 0.94261648, 0.94261648,
+       0.94261648]), 'mean_test_score': array([0.9424059, 0.9424059, 0.9424059, 0.9424059, 0.9424059, 0.9424059]), 'std_test_score': array([0.00025791, 0.00025791, 0.00025791, 0.00025791, 0.00025791,
+       0.00025791]), 'rank_test_score': array([1, 1, 1, 1, 1, 1], dtype=int32)}
+Done full script: 
+ Time elapsed: 0:03:00.493974

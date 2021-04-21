@@ -1,0 +1,65 @@
+Start reading data: 
+ Time elapsed: 0:00:00.000102
+Done reading data: 
+ Time elapsed: 0:00:00.736252 
+
+sizes: 
+ train features: 		 (18995, 37) <class 'pandas.core.frame.DataFrame'> 
+ train labels (sepsis) : 	 (18995, 1) <class 'pandas.core.frame.DataFrame'> 
+ test features: 		 (151968, 37) <class 'pandas.core.frame.DataFrame'>
+
+Start Scaling data: 
+ Time elapsed: 0:00:00.736289
+Done Scaling data: 
+ Time elapsed: 0:00:00.877276 
+
+df train features after scaling: 
+,             0     1     2       3   ...     33     34       35     36
+0          1.0   8.5  34.0  33.239  ...  1.831  6.962  114.500  7.372
+1         10.0   6.5  71.0  32.833  ...  1.557  6.735  132.084  7.377
+2        100.0   7.5  68.0  32.465  ...  1.691  7.169  117.390  7.366
+3       1000.0   6.5  79.0  31.952  ...  1.606  6.982  140.390  7.364
+4      10000.0   6.5  76.0  33.368  ...  1.638  7.190  123.032  7.377
+...        ...   ...   ...     ...  ...    ...    ...      ...    ...
+18990   9993.0   6.5  80.0  32.780  ...  1.415  7.879  101.643  7.370
+18991   9995.0   6.5  73.0  32.572  ...  1.621  7.259  175.428  7.371
+18992   9996.0  12.5  53.0  32.836  ...  1.708  7.198   99.250  7.381
+18993   9998.0   6.5  89.0  32.878  ...  1.604  6.387  130.956  7.371
+18994   9999.0   6.5  85.0  32.441  ...  1.563  7.425  127.761  7.374
+
+[18995 rows x 37 columns]
+
+df train labels sepsis after scaling: 
+       LABEL_Sepsis
+0               0.0
+1               0.0
+2               0.0
+3               0.0
+4               0.0
+...             ...
+18990           0.0
+18991           0.0
+18992           0.0
+18993           0.0
+18994           0.0
+
+[18995 rows x 1 columns]
+
+sizes: 
+ X train: 	 (18995, 37) <class 'numpy.ndarray'> 
+ X test: 	 (151968, 37) <class 'numpy.ndarray'> 
+ Y train: 	 (18995,) <class 'numpy.ndarray'>
+grid: 
+ GridSearchCV(estimator=LogisticRegression(),
+             param_grid={'C': [1], 'max_iter': [10000], 'penalty': ['l2'],
+                         'solver': ['lbfgs']})
+Start fitting Grid Search CV: 
+ Time elapsed: 0:00:00.937908
+Fitting...
+Done fitting Grid Search CV: 
+ Time elapsed: 0:00:02.040612
+
+Grid Search Best Score: 
+ 0.942405896288497
+Grid Search Best Score: 
+ LogisticRegression(C=1, max_iter=10000)

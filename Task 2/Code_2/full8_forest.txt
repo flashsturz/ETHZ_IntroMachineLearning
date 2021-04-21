@@ -1,0 +1,126 @@
+Start reading data: 
+ Time elapsed: 0:00:00.000109
+Done reading data: 
+ Time elapsed: 0:00:00.788300 
+
+sizes: 
+ train features: 		 (18995, 37) <class 'pandas.core.frame.DataFrame'> 
+ train labels (sepsis) : 	 (18995, 1) <class 'pandas.core.frame.DataFrame'> 
+ test features: 		 (151968, 37) <class 'pandas.core.frame.DataFrame'>
+
+Start Scaling data: 
+ Time elapsed: 0:00:00.788336
+Done Scaling data: 
+ Time elapsed: 0:00:00.934563 
+
+df train features after scaling: 
+,             0     1     2       3   ...     33     34       35     36
+0          1.0   8.5  34.0  33.239  ...  1.831  6.962  114.500  7.372
+1         10.0   6.5  71.0  32.833  ...  1.557  6.735  132.084  7.377
+2        100.0   7.5  68.0  32.465  ...  1.691  7.169  117.390  7.366
+3       1000.0   6.5  79.0  31.952  ...  1.606  6.982  140.390  7.364
+4      10000.0   6.5  76.0  33.368  ...  1.638  7.190  123.032  7.377
+...        ...   ...   ...     ...  ...    ...    ...      ...    ...
+18990   9993.0   6.5  80.0  32.780  ...  1.415  7.879  101.643  7.370
+18991   9995.0   6.5  73.0  32.572  ...  1.621  7.259  175.428  7.371
+18992   9996.0  12.5  53.0  32.836  ...  1.708  7.198   99.250  7.381
+18993   9998.0   6.5  89.0  32.878  ...  1.604  6.387  130.956  7.371
+18994   9999.0   6.5  85.0  32.441  ...  1.563  7.425  127.761  7.374
+
+[18995 rows x 37 columns]
+
+df train labels sepsis after scaling: 
+       LABEL_Sepsis
+0               0.0
+1               0.0
+2               0.0
+3               0.0
+4               0.0
+...             ...
+18990           0.0
+18991           0.0
+18992           0.0
+18993           0.0
+18994           0.0
+
+[18995 rows x 1 columns]
+
+sizes: 
+ X train: 	 (18995, 37) <class 'numpy.ndarray'> 
+ X test: 	 (151968, 37) <class 'numpy.ndarray'> 
+ Y train: 	 (18995,) <class 'numpy.ndarray'>
+grid: 
+ GridSearchCV(estimator=DecisionTreeClassifier(),
+             param_grid={'criterion': ['gini', 'entropy'],
+                         'max_depth': [2, 4, 6, 8, 10, 12]},
+             scoring='roc_auc')
+Start fitting Grid Search CV: 
+ Time elapsed: 0:00:00.992201
+Fitting...
+Done fitting Grid Search CV: 
+ Time elapsed: 0:00:20.912236
+
+Grid Search Best Score: 
+ 0.606710686752376
+Grid Search Best Estimator: 
+ DecisionTreeClassifier(criterion='entropy', max_depth=4)
+Grid Search Best Estimator: 
+ DecisionTreeClassifier(criterion='entropy', max_depth=4)
+
+Grid Search all CV Results: 
+ {'mean_fit_time': array([0.09131203, 0.17309399, 0.25563779, 0.33572531, 0.41982121,
+       0.491891  , 0.10519361, 0.20798354, 0.3134316 , 0.42023821,
+       0.50631213, 0.57597799]), 'std_fit_time': array([0.00195605, 0.00168832, 0.00211957, 0.00129802, 0.00497892,
+       0.0035455 , 0.00096095, 0.00207287, 0.00427008, 0.0073812 ,
+       0.00341811, 0.01019783]), 'mean_score_time': array([0.00278602, 0.00248241, 0.00242224, 0.00255456, 0.00247655,
+       0.00270114, 0.00231705, 0.00247302, 0.00239162, 0.00265617,
+       0.00265512, 0.00248499]), 'std_score_time': array([4.98528325e-04, 2.68587519e-04, 1.76053070e-04, 2.84482208e-04,
+       1.04312158e-04, 4.41577176e-04, 7.88022421e-05, 1.35462681e-04,
+       6.07787648e-05, 3.19503186e-04, 2.70116933e-04, 1.89547419e-05]), 'param_criterion': masked_array(data=['gini', 'gini', 'gini', 'gini', 'gini', 'gini',
+                   'entropy', 'entropy', 'entropy', 'entropy', 'entropy',
+                   'entropy'],
+             mask=[False, False, False, False, False, False, False, False,
+                   False, False, False, False],
+       fill_value='?',
+            dtype=object), 'param_max_depth': masked_array(data=[2, 4, 6, 8, 10, 12, 2, 4, 6, 8, 10, 12],
+             mask=[False, False, False, False, False, False, False, False,
+                   False, False, False, False],
+       fill_value='?',
+            dtype=object), 'params': [{'criterion': 'gini', 'max_depth': 2}, {'criterion': 'gini', 'max_depth': 4}, {'criterion': 'gini', 'max_depth': 6}, {'criterion': 'gini', 'max_depth': 8}, {'criterion': 'gini', 'max_depth': 10}, {'criterion': 'gini', 'max_depth': 12}, {'criterion': 'entropy', 'max_depth': 2}, {'criterion': 'entropy', 'max_depth': 4}, {'criterion': 'entropy', 'max_depth': 6}, {'criterion': 'entropy', 'max_depth': 8}, {'criterion': 'entropy', 'max_depth': 10}, {'criterion': 'entropy', 'max_depth': 12}], 'split0_test_score': array([0.55153648, 0.55971614, 0.56057039, 0.56393913, 0.53618901,
+       0.4969947 , 0.54562109, 0.56012976, 0.56209941, 0.53868356,
+       0.51922117, 0.49232465]), 'split1_test_score': array([0.54436031, 0.62614275, 0.62711664, 0.62653964, 0.62447928,
+       0.63337103, 0.54920339, 0.62915576, 0.64883751, 0.59285611,
+       0.55434945, 0.55542626]), 'split2_test_score': array([0.60548473, 0.61283494, 0.63036823, 0.6274822 , 0.63115795,
+       0.59994646, 0.60548473, 0.63007296, 0.57951818, 0.55697758,
+       0.53898634, 0.52051218]), 'split3_test_score': array([0.56639079, 0.61405507, 0.60145224, 0.62697045, 0.58616449,
+       0.58515509, 0.62000197, 0.61438235, 0.63387681, 0.57683006,
+       0.55974319, 0.53304456]), 'split4_test_score': array([0.53890436, 0.54266465, 0.58653661, 0.56767304, 0.53628734,
+       0.54004891, 0.54633783, 0.59981259, 0.55350614, 0.56402099,
+       0.54588309, 0.51978395]), 'mean_test_score': array([0.56133533, 0.59108271, 0.60120882, 0.60252089, 0.58285561,
+       0.57110324, 0.5733298 , 0.60671069, 0.59556761, 0.56587366,
+       0.54363665, 0.52421832]), 'std_test_score': array([0.02392507, 0.03334146, 0.02603191, 0.03000224, 0.04104381,
+       0.04767203, 0.03252892, 0.02579069, 0.03860608, 0.0182755 ,
+       0.01412071, 0.02050582]), 'rank_test_score': array([10,  5,  3,  2,  6,  8,  7,  1,  4,  9, 11, 12], dtype=int32)}
+Y pred prob after predict proba:  (18995, 2)
+first elements of Y pred prob after sigmoid: 
+ [[0.71848295 0.51575754]
+ [0.72618994 0.50615545]
+ [0.71704379 0.51753163]
+ [0.71704379 0.51753163]
+ [0.71848295 0.51575754]
+ [0.71704379 0.51753163]
+ [0.72434679 0.50846753]
+ [0.71747675 0.51699852]
+ [0.71657781 0.51810478]
+ [0.70854164 0.52789309]
+ [0.71657781 0.51810478]
+ [0.71848295 0.51575754]
+ [0.72618994 0.50615545]
+ [0.71848295 0.51575754]
+ [0.72618994 0.50615545]
+ [0.71704379 0.51753163]
+ [0.72618994 0.50615545]
+ [0.72618994 0.50615545]
+ [0.71657781 0.51810478]
+ [0.72618994 0.50615545]]
+Y pred after predict:  (18995,)
