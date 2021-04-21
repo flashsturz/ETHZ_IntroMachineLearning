@@ -52,6 +52,13 @@ def sigmoid(x):
 
 
 def main(df_train_X, df_train_Y, df_test_X):
+    """
+    :param df_train_X: pandas df - without id, only one row per patient
+    :param df_train_Y: pandas df (not a Series) - only one column named "LABEL_Sepsis"
+    :param df_test_X: pandas df - without id, only one row per patient
+    :return: pandas df with probabilities - one per patient, without id, but sorted same as input
+    """
+
     estim = 'forest' # set either to LR, SVC, forest
     scaling = True # set either true or false
 
