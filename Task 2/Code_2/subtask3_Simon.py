@@ -139,8 +139,8 @@ acer_list = [{'name_of_compute': 'mean',
 
 importfiles = acer_list
 
-ALPHAS = [0.1, 1, 10]
-L1_RATIO = [0.09, 0.1, 0.95]
+ALPHAS = [1]
+L1_RATIO = [0.1]
 
 KFOLD_SPLITS = 2
 KFOLD_REPEATS = 1
