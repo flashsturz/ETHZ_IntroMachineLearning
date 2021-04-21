@@ -142,7 +142,7 @@ importfiles = acer_list
 ALPHAS = [0.1, 1, 10]
 L1_RATIO = [0.09, 0.1, 0.95]
 
-KFOLD_SPLITS = 5
+KFOLD_SPLITS = 2
 KFOLD_REPEATS = 1
 
 verbose = 1
