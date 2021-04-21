@@ -1,0 +1,2 @@
+,mean_fit_time,std_fit_time,mean_score_time,std_score_time,param_criterion,param_max_depth,params,split0_test_score,split1_test_score,split2_test_score,split3_test_score,split4_test_score,mean_test_score,std_test_score,rank_test_score
+0,0.18118391036987305,0.006573816943648472,0.00268702507019043,7.209430918345045e-05,gini,4,"{'criterion': 'gini', 'max_depth': 4}",0.5597155001839715,0.6238726916713624,0.613112912440531,0.614798669840058,0.5426646495648543,0.5908328847401554,0.033017746238519066,1
