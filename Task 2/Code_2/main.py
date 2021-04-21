@@ -81,8 +81,8 @@ print('=====   Preparations finished. Imputing...')
 
 
 # Get IterativeImpute data
-#train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_inactive)
-#train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_active)
+train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_inactive)
+train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_active)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ print('=====   Imputing finished. Solving subtask1...')
 train_labels_task1_pd = train_labels_pd[['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total', 'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2', 'LABEL_Bilirubin_direct', 'LABEL_EtCO2']]
 
 # Calculate Output for Subtask 1
-#result_subtask1_pd = Subtask1.solveSubtask1(train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_labels_task1_pd)
+result_subtask1_pd = Subtask1.solveSubtask1(train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_labels_task1_pd)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -102,8 +102,8 @@ train_labels_task1_pd = train_labels_pd[['LABEL_BaseExcess', 'LABEL_Fibrinogen',
 
 print('=====   Subtask1 finished. Solving subtask2...')
 
-#train_label_subtask2 = train_labels_pd['LABEL_Sepsis']
-#result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_reduced_pd)
+train_label_subtask2 = train_labels_pd['LABEL_Sepsis']
+result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_reduced_pd)
 
 
 # -------------------------------------------------------------------------------------------------
