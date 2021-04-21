@@ -73,15 +73,11 @@ def simple_imputer_iml2(strat, features_pd):
                         this_pid[2, isnan_col] = avg_fulldata[isnan_col]
 
         # Imputers:
-        np.savetxt('test_save_thispid.csv',this_pid,delimiter=',')
         imputer = SimpleImputer(missing_values=np.nan, strategy=strat)
 
         this_pid_imp = imputer.fit_transform(this_pid)
-        np.savetxt('test_save_thispid_imp.csv',this_pid_imp,delimiter=',')
-
 
         # write imputed person data to the multi dimensional list
-
         md_list_imp[:, :, pid] = this_pid_imp
 
         # The md_list_imp needs to be written back to a pandas dataframe in the same shape as before.
