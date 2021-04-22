@@ -24,6 +24,7 @@ from datetime import datetime
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
+import time
 start = datetime.now()
 
 
@@ -132,8 +133,8 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
             'max_depth': [2, 3, 4, 5],  # [4]
             'class_weight': ['balanced']
         }
-        model_forest = DecisionTreeClassifier(random_state=42)
-        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc')  # , scoring= roc_auc_score)
+        model_forest = DecisionTreeClassifier(random_state=42, class_weight = 'balanced')
+        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
 
 
     elif estim == 'LR':
@@ -153,8 +154,8 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
             'C': [1, 10]
         }
         """
-        model_LR = LogisticRegression(random_state=42, verbose=False)
-        grid = GridSearchCV(estimator=model_LR, param_grid=param_grid_LogRegr, scoring='roc_auc', n_jobs=2)  # , scoring= roc_auc_score)
+        model_LR = LogisticRegression(random_state=42, verbose=False, class_weight = 'balanced')
+        grid = GridSearchCV(estimator=model_LR, param_grid=param_grid_LogRegr, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
 
     elif estim == 'SVC':
         param_grid_SVC = [
@@ -170,8 +171,8 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
             'gamma' : ['scale', 'auto']
         }
         """
-        model_svc = SVC(random_state=42, verbose=True)
-        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=2)  # , scoring= roc_auc_score)
+        model_svc = SVC(random_state=42, verbose=True, class_weight='balanced')
+        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
 
     else:
         print("Variable <estim> has non-allowed value \n must be either SVC, LR or forest \n actual value:", estim)
@@ -203,7 +204,7 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
 
     # print grid.cv_results_ to csv file (via pandas df)
     gscv_results_pd = pd.DataFrame(grid.cv_results_)
-    gscv_results_pd.to_csv(str(datetime.now())+'_cv_results.csv')
+    gscv_results_pd.to_csv(str(time.perf_counter())+'_cv_results.csv')
 
     # get Y pred based on X test
     if estim == 'forest':

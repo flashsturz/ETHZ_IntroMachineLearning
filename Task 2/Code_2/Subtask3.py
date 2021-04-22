@@ -90,7 +90,7 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
         print("The following parameter Grid is used for regression: ")
         print(paramgrid)
 
-    gscv = GridSearchCV(ENreg, param_grid=paramgrid, scoring=task3_scorer, n_jobs=4, cv=rkf)
+    gscv = GridSearchCV(ENreg, param_grid=paramgrid, scoring=task3_scorer, n_jobs=-1, cv=rkf)
     if verbose >= 1:
         print("  Finished regression-prep, fit and predict starts:")
         # print_elapsed_time(starttime)
@@ -104,8 +104,8 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
 
     gcsv_results_pd = pd.DataFrame(gscv.cv_results_)
 
-    print("Grid Search Best Score: \n", grid.best_score_)
-    print("Grid Search Best Estimator: \n", grid.best_estimator_)
+    print("Grid Search Best Score: \n", gscv.best_score_)
+    print("Grid Search Best Estimator: \n", gscv.best_estimator_)
 
     return gcsv_results_pd, gscv.best_estimator_
 

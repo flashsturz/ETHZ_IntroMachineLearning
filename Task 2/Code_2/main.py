@@ -50,7 +50,8 @@ COL_SUBTASK3 = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 
 COL_ALL = ['pid']+COL_SUBTASK1+COL_SUBTASK2+COL_SUBTASK3
 
-USE_SIMPLEIMP_FILES=False
+USE_SIMPLEIMP_FILES=True
+USE_ITERATIVEIMP_FILES=True
 
 TEST_SIMPLEIMP_MEAN='ImputedFiles/test_features_simpleImpute_mean.csv'
 TRAIN_SIMPLEIMP_MEAN='ImputedFiles/train_features_simpleImpute_mean.csv'
@@ -58,6 +59,13 @@ TEST_SIMPLEIMP_MEDIAN='ImputedFiles/test_features_simpleImpute_median.csv'
 TRAIN_SIMPLEIMP_MEDIAN='ImputedFiles/train_features_simpleImpute_median.csv'
 TEST_SIMPLEIMP_CONST='ImputedFiles/test_features_simpleImpute_constant.csv'
 TRAIN_SIMPLEIMP_CONST='ImputedFiles/train_features_simpleImpute_constant.csv'
+
+train_data_reduced_path = 'ImputedFiles/train_data_iterImp_reduced.csv'
+test_data_reduced_path = 'ImputedFiles/test_data_iterImp_reduced.csv'
+train_data_reduced_withGrad_path = 'ImputedFiles/train_data_iterImp_reduced_withGrad.csv'
+test_data_reduced_withGrad_path = 'ImputedFiles/test_data_iterImp_reduced_withGrad.csv'
+train_data_imp_path = 'ImputedFiles/train_data_imp.csv'
+test_data_imp_path = 'ImputedFiles/test_data_imp.csv'
 
 # -------------------------------------------------------------------------------------------------
 # PREPS
@@ -103,8 +111,17 @@ else:
     [test_imp_median_pd, train_imp_median_pd] = FeatureTransform_simpleImp.simpleimp_median(test_features_pd, train_features_pd)
 
 # Get IterativeImpute data
-train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_inactive)
-train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_active)
+if USE_ITERATIVEIMP_FILES:
+    train_data_reduced_pd = pd.read_csv(train_data_reduced_path)
+    test_data_reduced_pd = pd.read_csv(test_data_reduced_path)
+    train_data_reduced_withGrad_pd = pd.read_csv(train_data_reduced_withGrad_path)
+    test_data_reduced_withGrad_pd = pd.read_csv(test_data_reduced_withGrad_path)
+    #train_data_imp_pd = pd.read_csv(train_data_imp_path) # Too large file for upload to Github. If you need this file, set USE_ITERATIVEIMP_FILES to False!
+    test_data_imp_pd = pd.read_csv(test_data_imp_path)
+else:
+    train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_inactive)
+    train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_active)
+
 
 
 # -------------------------------------------------------------------------------------------------

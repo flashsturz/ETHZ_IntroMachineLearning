@@ -116,6 +116,9 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
         train_data_imp_pd = pd.DataFrame(train_data_imp, columns=train_data_frame.columns)
         test_data_imp_pd = pd.DataFrame(test_data_imp, columns=train_data_frame.columns)
 
+        train_data_imp_pd.to_csv('ImputedFiles/train_data_imp.csv')
+        test_data_imp_pd.to_csv('ImputedFiles/test_data_imp.csv')
+
         print("Finished Imputation. Reducing Data Starts")
         print_elapsed_time(totaltime_start)
 
@@ -135,6 +138,9 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
 
         train_data_reduced_pd = pd.DataFrame(train_data_reduced, columns=train_data_frame.columns)
         test_data_reduced_pd = pd.DataFrame(test_data_reduced, columns=test_data_frame.columns)
+
+        train_data_reduced_pd.to_csv('ImputedFiles/train_data_iterImp_reduced.csv')
+        test_data_reduced_pd.to_csv('ImputedFiles/test_data_iterImp_reduced.csv')
 
         #return train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd #TODO: Flavio: Muss diese Zeile nicht ans ende (Z169)? Wenn hier werden die folgenden if nicht ausgeführt.
 
@@ -163,6 +169,9 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
                                                       columns=[*train_data_frame.columns, *gradient_labels])
         test_data_reduced_withGrad_pd = pd.DataFrame(test_data_reduced_withGrad,
                                                      columns=[*test_data_frame.columns, *gradient_labels])
+
+        train_data_reduced_withGrad_pd.to_csv('ImputedFiles/train_data_iterImp_reduced_withGrad.csv')
+        test_data_reduced_withGrad_pd.to_csv('ImputedFiles/test_data_iterImp_reduced_withGrad.csv')
 
         return train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_data_imp_pd, test_data_imp_pd
 
