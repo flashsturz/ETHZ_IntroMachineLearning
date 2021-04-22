@@ -33,9 +33,9 @@ def print_elapsed_time(starttime):
 # VARIABLES
 # ---------
 
-PATH_TRAIN_FEATURES = 'Data_2/train_features_SHORT_FOR_TESTING.csv'
-PATH_TEST_FEATURES = 'Data_2/test_features_SHORT_FOR_TESTING.csv'
-PATH_TRAIN_LABELS = 'Data_2/train_labels_SHORT_FOR_TESTING.csv'
+PATH_TRAIN_FEATURES = 'Data_2/train_features.csv'
+PATH_TEST_FEATURES = 'Data_2/test_features.csv'
+PATH_TRAIN_LABELS = 'Data_2/train_labels.csv'
 PATH_SAMPLE_FILE = 'Data_2/sample.csv'
 
 COL_SUBTASK1 = ['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total',
@@ -46,6 +46,14 @@ COL_SUBTASK3 = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 
 COL_ALL = ['pid']+COL_SUBTASK1+COL_SUBTASK2+COL_SUBTASK3
 
+USE_SIMPLEIMP_FILES=True
+
+TEST_SIMPLEIMP_MEAN='Data_2/test_simpleimp_mean.csv'
+TRAIN_SIMPLEIMP_MEAN='Data_2/train_simpleimp_mean.csv'
+TEST_SIMPLEIMP_MEDIAN='Data_2/test_simpleimp_median.csv'
+TRAIN_SIMPLEIMP_MEDIAN='Data_2/train_simpleimp_median.csv'
+TEST_SIMPLEIMP_CONST='Data_2/test_simpleimp_constant.csv'
+TRAIN_SIMPLEIMP_CONST='Data_2/train_simpleimp_constant.csv'
 
 # -------------------------------------------------------------------------------------------------
 # PREPS
@@ -75,10 +83,18 @@ list_pid = test_features_pd.pid.unique()  # get list of all pid in test_data
 print('=====   Preparations finished. Imputing...')
 
 # Get simpleImpute data
-[test_imp_constant_pd, train_imp_constant_pd] = FeatureTransform_simpleImp.simpleimp_constant(test_features_pd, train_features_pd)
-[test_imp_mean_pd, train_imp_mean_pd] = FeatureTransform_simpleImp.simpleimp_mean(test_features_pd, train_features_pd)
-[test_imp_median_pd, train_imp_median_pd] = FeatureTransform_simpleImp.simpleimp_median(test_features_pd, train_features_pd)
-
+#  If cond. to jump very timeconsuming simpleImpute step if Imputingfiles are provided.
+if USE_SIMPLEIMP_FILES:
+    test_imp_constant_pd = pd.read_csv(TEST_SIMPLEIMP_CONST)
+    train_imp_constant_pd = pd.read_csv(TRAIN_SIMPLEIMP_CONST)
+    test_imp_mean_pd = pd.read_csv(TEST_SIMPLEIMP_MEAN)
+    train_imp_mean_pd = pd.read_csv(TRAIN_SIMPLEIMP_MEAN)
+    test_imp_median_pd = pd.read_csv(TEST_SIMPLEIMP_MEDIAN)
+    train_imp_median_pd = pd.read_csv(TRAIN_SIMPLEIMP_MEDIAN)
+else:
+    [test_imp_constant_pd, train_imp_constant_pd] = FeatureTransform_simpleImp.simpleimp_constant(test_features_pd, train_features_pd)
+    [test_imp_mean_pd, train_imp_mean_pd] = FeatureTransform_simpleImp.simpleimp_mean(test_features_pd, train_features_pd)
+    [test_imp_median_pd, train_imp_median_pd] = FeatureTransform_simpleImp.simpleimp_median(test_features_pd, train_features_pd)
 
 # Get IterativeImpute data
 train_data_reduced_pd, test_data_reduced_pd, train_data_imp_pd, test_data_imp_pd = FeatureTransform_IterativeImp.iterativeImpute(PATH_TRAIN_FEATURES, PATH_TEST_FEATURES, gradients_inactive)

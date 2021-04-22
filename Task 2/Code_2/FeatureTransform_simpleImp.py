@@ -89,8 +89,13 @@ def simple_imputer_iml2(strat, features_pd):
 def simpleimp_mean(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using mean strategy and return pd_frames
 
+    print("Imputing using simpleImputer starts. Strategy: mean.")
+
     train_features_simpleimp = simple_imputer_iml2('mean', train_features_pd)
+    print('...train finished, strating with test files...')
     test_features_simpleimp = simple_imputer_iml2('mean', test_features_pd)
+
+    print("Finished. Returning imputed train and test files...")
 
     return test_features_simpleimp, train_features_simpleimp
 
@@ -98,8 +103,13 @@ def simpleimp_mean(test_features_pd, train_features_pd):
 def simpleimp_median(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using median strategy and return pd_frames
 
+    print("Imputing using simpleImputer starts. Strategy: median.")
+
     train_features_simpleimp = simple_imputer_iml2('median', train_features_pd)
+    print('...train finished, starting with test files...')
     test_features_simpleimp = simple_imputer_iml2('median', test_features_pd)
+
+    print("Finished. Returning imputed train and test files...")
 
     return test_features_simpleimp, train_features_simpleimp
 
@@ -107,8 +117,13 @@ def simpleimp_median(test_features_pd, train_features_pd):
 def simpleimp_constant(test_features_pd, train_features_pd):
     # This functions Imputes the test and train data using constant (0) strategy and return pd_frames
 
+    print("Imputing using simpleImputer starts. Strategy: constant.")
+
     train_features_simpleimp = simple_imputer_iml2('constant', train_features_pd)
+    print('...train finished, starting with test files...')
     test_features_simpleimp = simple_imputer_iml2('constant', test_features_pd)
+
+    print("Finished. Returning imputed train and test files...")
 
     return test_features_simpleimp, train_features_simpleimp
 
