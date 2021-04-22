@@ -48,12 +48,12 @@ COL_ALL = ['pid']+COL_SUBTASK1+COL_SUBTASK2+COL_SUBTASK3
 
 USE_SIMPLEIMP_FILES=True
 
-TEST_SIMPLEIMP_MEAN='Data_2/test_simpleimp_mean.csv'
-TRAIN_SIMPLEIMP_MEAN='Data_2/train_simpleimp_mean.csv'
-TEST_SIMPLEIMP_MEDIAN='Data_2/test_simpleimp_median.csv'
-TRAIN_SIMPLEIMP_MEDIAN='Data_2/train_simpleimp_median.csv'
-TEST_SIMPLEIMP_CONST='Data_2/test_simpleimp_constant.csv'
-TRAIN_SIMPLEIMP_CONST='Data_2/train_simpleimp_constant.csv'
+TEST_SIMPLEIMP_MEAN='ImputedFiles/test_features_simpleImpute_mean.csv'
+TRAIN_SIMPLEIMP_MEAN='ImputedFiles/train_features_simpleImpute_mean.csv'
+TEST_SIMPLEIMP_MEDIAN='ImputedFiles/test_features_simpleImpute_median.csv'
+TRAIN_SIMPLEIMP_MEDIAN='ImputedFiles/train_features_simpleImpute_median.csv'
+TEST_SIMPLEIMP_CONST='ImputedFiles/test_features_simpleImpute_constant.csv'
+TRAIN_SIMPLEIMP_CONST='ImputedFiles/train_features_simpleImpute_constant.csv'
 
 # -------------------------------------------------------------------------------------------------
 # PREPS

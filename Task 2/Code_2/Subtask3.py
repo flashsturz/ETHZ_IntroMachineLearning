@@ -79,7 +79,7 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
         # print_elapsed_time(starttime)
 
     ALPHAS = [1]
-    L1_RATIO = [0.1]
+    L1_RATIO = [0.5]
 
     ENreg = ElasticNet(random_state=1234, max_iter=10e5, tol=1e-4)
     paramgrid = {'l1_ratio': L1_RATIO, 'alpha': ALPHAS}
