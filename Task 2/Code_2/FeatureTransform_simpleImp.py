@@ -75,7 +75,7 @@ def simple_imputer_iml2(strat, features_pd):
                         this_pid[2, isnan_col] = avg_fulldata[isnan_col]
 
         # Imputers:
-        print("SimpleImpute: Imputing starts using sklearn.SimpleImputer()")
+        #print("SimpleImpute: Imputing starts using sklearn.SimpleImputer()")
         imputer = SimpleImputer(missing_values=np.nan, strategy=strat)
 
         this_pid_imp = imputer.fit_transform(this_pid)
@@ -83,8 +83,8 @@ def simple_imputer_iml2(strat, features_pd):
         # write imputed person data to the multi dimensional list
         md_list_imp[:, :, pid] = this_pid_imp
 
-        # The md_list_imp needs to be written back to a pandas dataframe in the same shape as before.
-        features_imp_pd = md_list2pdSeries(md_list_imp, fulldata.columns.tolist())
+    # The md_list_imp needs to be written back to a pandas dataframe in the same shape as before.
+    features_imp_pd = md_list2pdSeries(md_list_imp, fulldata.columns.tolist())
 
     return features_imp_pd
 
