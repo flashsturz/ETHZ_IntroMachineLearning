@@ -4,7 +4,7 @@
 # Description Task 2
 # subtask 2: Sepsis Classification
 # --------------------------------------------------------------------------------------------------
-
+import imblearn.pipeline
 import numpy as np
 import random
 import pandas as pd
@@ -14,17 +14,21 @@ import os
 from sklearn.metrics import roc_auc_score
 from sklearn import svm
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn import tree
 from sklearn import metrics
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline, Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from datetime import datetime
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import roc_auc_score
 from sklearn.tree import DecisionTreeClassifier
 import time
+from imblearn.under_sampling import TomekLinks
+from imblearn.combine import SMOTETomek, SMOTEENN
+from imblearn.pipeline import Pipeline
 start = datetime.now()
 
 
@@ -65,7 +69,7 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     :return: pandas df with probabilities - one per patient, without id, but sorted same as input
     """
 
-    estim = 'forest'  # set either to LR, SVC, forest
+    estim = 'MLP'  # set either to LR, SVC, MLP, MLP_undersample,  forest
     scaling = True  # set either true or false
 
     # define path
@@ -117,6 +121,7 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     Y_train = df_train_labels_sepsis.to_numpy()
     # print("Y BEFORE RAVEL: \n", Y_train[0:20, :])
     Y_train = Y_train.ravel()
+    #Y_train = Y_train[:18994]
     # print("Y AFTER RAVEL: \n", Y_train[0:20])
     print(f"Done Scaling data: \n Time elapsed: {datetime.now() - start} \n")
 
@@ -133,18 +138,19 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
             'max_depth': [2, 3, 4, 5],  # [4]
             'class_weight': ['balanced']
         }
-        model_forest = DecisionTreeClassifier(random_state=42, class_weight = 'balanced')
-        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
+        model_forest = DecisionTreeClassifier(random_state=42, class_weight='balanced')
+        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc',
+                            n_jobs=-1)  # , scoring= roc_auc_score)
 
 
     elif estim == 'LR':
 
         param_grid_LogRegr = {
-            'penalty': ['l1', 'l2'],
-            'solver': ['liblinear', 'newton-cg', 'sag', 'lbfgs'],
-            'max_iter': np.linspace(5, 30, 2),  # [50000, 70000, 1000000, 120000, 150000],
-            'C': np.linspace(4.6, 6.2, 2),  # [0.1, 1, 10, 20, 30, 40]
-            'l1_ratio': np.linspace(0.6, 0.75, 2)
+            'penalty': ['l1', 'l2', 'elasticnet'],
+            'solver': ['newton-cg', 'sag', 'lbfgs', 'saga'],
+            #'max_iter': np.linspace(5, 30, 2),  # [50000, 70000, 1000000, 120000, 150000],
+            'C': [0.1, 1, 10, 50, 100, 1000], #np.linspace(0.1, 100, 2),  # [0.1, 1, 10, 20, 30, 40]
+            'l1_ratio': [0.1, 0.3, 0.5, 0.7, 0.9]#np.linspace(0.6, 0.75, 2)
             }
         """
         param_grid_LogRegr = {
@@ -155,12 +161,12 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
         }
         """
         model_LR = LogisticRegression(random_state=42, verbose=False, class_weight = 'balanced')
-        grid = GridSearchCV(estimator=model_LR, param_grid=param_grid_LogRegr, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
+        grid = GridSearchCV(estimator=model_LR, param_grid=param_grid_LogRegr, scoring='roc_auc', n_jobs=-1, cv = 5)  # , scoring= roc_auc_score)
 
     elif estim == 'SVC':
         param_grid_SVC = [
-          {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
-          {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']}
+          {'C': [1, 10, 100, 1000]} #, 'kernel': ['linear']
+          #{'C': [1, 10, 100, 1000], 'kernel': ['rbf'], 'gamma': [0.001, 0.0001]}
         ]
 
         """, #[10, 20, 40],
@@ -172,8 +178,31 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
         }
         """
         model_svc = SVC(random_state=42, verbose=True, class_weight='balanced')
-        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=-1)  # , scoring= roc_auc_score)
+        model_svc = LinearSVC(random_state=42, verbose=True, class_weight='balanced')
+        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=-1, cv= 5)  # , scoring= roc_auc_score)
 
+    elif estim == 'MLP':
+        param_grid_MLP = {
+            'solver': ['adam'],
+            'hidden_layer_sizes': [(110,)],
+            'max_iter': [80, 105, 120],
+            'alpha': [0.0001, 0.001, 0.01, 0.1, 1]
+        }
+        model_mlp = MLPClassifier(activation='logistic', random_state=42)
+        grid = GridSearchCV(estimator = model_mlp, param_grid=param_grid_MLP, scoring='roc_auc', n_jobs = -1, cv = 5)
+
+    elif estim == 'MLP_undersample':
+        pipe = imblearn.pipeline.Pipeline([('Normalize', 'passthrough'), ('Undersample', 'passthrough'), ('clf', 'passthrough')])
+        param_grid_MLP_undersample = {
+            'Normalize': [StandardScaler()],
+            'Undersample': [TomekLinks()],
+            'clf': [MLPClassifier(activation='logistic', random_state=42)],
+            'clf__hidden_layer_sizes': [(110,)], #(110,),
+            'clf__solver': ['adam'],
+            'clf__max_iter': [80, 105, 120],
+            'clf__alpha': [0.0001, 0.001, 0.01, 0.1, 1]
+        }
+        grid = GridSearchCV(estimator=pipe, param_grid=param_grid_MLP_undersample, scoring='roc_auc', n_jobs=-1, cv=5)
     else:
         print("Variable <estim> has non-allowed value \n must be either SVC, LR or forest \n actual value:", estim)
 
@@ -207,7 +236,7 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     gscv_results_pd.to_csv(str(time.perf_counter())+'_cv_results.csv')
 
     # get Y pred based on X test
-    if estim == 'forest':
+    if (estim == 'forest' or estim == 'MLP' or estim == 'MLP_undersample'):
         Y_pred_decfct_sigmoid = grid.predict_proba(X_test)
         Y_pred_decfct_sigmoid = Y_pred_decfct_sigmoid[:, 1]
     else:

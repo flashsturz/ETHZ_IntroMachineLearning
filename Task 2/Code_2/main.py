@@ -50,8 +50,8 @@ COL_SUBTASK3 = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 
 COL_ALL = ['pid']+COL_SUBTASK1+COL_SUBTASK2+COL_SUBTASK3
 
-USE_SIMPLEIMP_FILES=True
-USE_ITERATIVEIMP_FILES=True
+USE_SIMPLEIMP_FILES=False
+USE_ITERATIVEIMP_FILES=False
 
 TEST_SIMPLEIMP_MEAN='ImputedFiles/test_features_simpleImpute_mean.csv'
 TRAIN_SIMPLEIMP_MEAN='ImputedFiles/train_features_simpleImpute_mean.csv'
@@ -59,6 +59,8 @@ TEST_SIMPLEIMP_MEDIAN='ImputedFiles/test_features_simpleImpute_median.csv'
 TRAIN_SIMPLEIMP_MEDIAN='ImputedFiles/train_features_simpleImpute_median.csv'
 TEST_SIMPLEIMP_CONST='ImputedFiles/test_features_simpleImpute_constant.csv'
 TRAIN_SIMPLEIMP_CONST='ImputedFiles/train_features_simpleImpute_constant.csv'
+TRAIN_SIMPLEIMP_CONST_REDUCED = 'ImputedFiles/X_MAT_train_simpleIMP_constant_12h_on1line.csv'
+TEST_SIMPLEIMP_CONST_REDUCED = 'ImputedFiles/X_MAT_test_simpleIMP_constant_12h_on1line.csv'
 
 train_data_reduced_path = 'ImputedFiles/train_data_iterImp_reduced.csv'
 test_data_reduced_path = 'ImputedFiles/test_data_iterImp_reduced.csv'
@@ -104,6 +106,8 @@ if USE_SIMPLEIMP_FILES:
     train_imp_mean_pd = pd.read_csv(TRAIN_SIMPLEIMP_MEAN)
     test_imp_median_pd = pd.read_csv(TEST_SIMPLEIMP_MEDIAN)
     train_imp_median_pd = pd.read_csv(TRAIN_SIMPLEIMP_MEDIAN)
+    train_imp_constant_12h_on1line_pd = pd.read_csv(TRAIN_SIMPLEIMP_CONST_REDUCED)
+    test_imp_constant_12h_on1line_pd = pd.read_csv(TEST_SIMPLEIMP_CONST_REDUCED)
 else:
     print('Using simpleImpute. This can be very timeconsuming...')
     [test_imp_constant_pd, train_imp_constant_pd] = FeatureTransform_simpleImp.simpleimp_constant(test_features_pd, train_features_pd)
@@ -133,7 +137,7 @@ print('=====   Imputing finished. Solving subtask1...')
 train_labels_task1_pd = train_labels_pd[['LABEL_BaseExcess', 'LABEL_Fibrinogen', 'LABEL_AST', 'LABEL_Alkalinephos', 'LABEL_Bilirubin_total', 'LABEL_Lactate', 'LABEL_TroponinI', 'LABEL_SaO2', 'LABEL_Bilirubin_direct', 'LABEL_EtCO2']]
 
 # Calculate Output for Subtask 1
-result_subtask1_pd = Subtask1.solveSubtask1(train_data_reduced_withGrad_pd, test_data_reduced_withGrad_pd, train_labels_task1_pd)
+result_subtask1_pd = Subtask1.solveSubtask1(train_data_reduced_pd, test_data_reduced_pd, train_labels_task1_pd)
 
 
 # -------------------------------------------------------------------------------------------------
@@ -143,11 +147,13 @@ print('=====   Subtask1 finished. Solving subtask2...')
 
 train_label_subtask2 = train_labels_pd['LABEL_Sepsis']
 train_data_subtask2 = train_data_reduced_pd
-del train_data_subtask2['pid']
+del train_data_subtask2['pid'] # remove if reading in 12h_on1line file
+del train_data_subtask2['Time']
 test_data_subtask2 = test_data_reduced_pd
 del test_data_subtask2['pid']
+del test_data_subtask2['Time']
 
-result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_subtask2)
+result_subtask2_pd = Subtask2.solveSubtask2(train_data_subtask2, train_label_subtask2, test_data_subtask2)
 
 
 # -------------------------------------------------------------------------------------------------
