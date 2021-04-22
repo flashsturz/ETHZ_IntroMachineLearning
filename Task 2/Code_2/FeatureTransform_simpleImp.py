@@ -40,6 +40,7 @@ def simple_imputer_iml2(strat, features_pd):
     #                2:pid
     list_pid = fulldata.pid.unique()  # get a list of all pids present in the dataset
     md_list = fulldata.loc[fulldata['pid'] == list_pid[0]].to_numpy()
+    print("SimpleImpute: Creating multidim. array...")
     list_pid = np.delete(list_pid, 0)
     for pid in list_pid:
         this_data = fulldata.loc[fulldata['pid'] == pid].to_numpy()
@@ -52,6 +53,7 @@ def simple_imputer_iml2(strat, features_pd):
     #   (needed to perform meadian or mean imputing in cols full of nan)
     fulldata_np = fulldata.to_numpy()
     (fulldata_rows, fulldata_cols) = np.shape(fulldata_np)
+    print("SimpleImpute: Computing avg over all patients...")
     avg_fulldata = np.nanmean(fulldata_np, axis=0)
 
     md_list_imp = md_list
@@ -73,6 +75,7 @@ def simple_imputer_iml2(strat, features_pd):
                         this_pid[2, isnan_col] = avg_fulldata[isnan_col]
 
         # Imputers:
+        print("SimpleImpute: Imputing starts using sklearn.SimpleImputer()")
         imputer = SimpleImputer(missing_values=np.nan, strategy=strat)
 
         this_pid_imp = imputer.fit_transform(this_pid)

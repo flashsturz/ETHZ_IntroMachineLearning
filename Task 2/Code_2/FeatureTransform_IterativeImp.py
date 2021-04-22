@@ -146,10 +146,10 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
         test_gradients = FeatureGradients(test_data_imp, 'test')
         train_data_reduced_withGrad = np.c_[train_data_reduced, train_gradients]
         test_data_reduced_withGrad = np.c_[test_data_reduced, test_gradients]
-        np.savetxt('../Data_2/train_features_iterImp_reduced_withGrad.csv', train_data_reduced_withGrad, fmt=('%.3f'),
-                   delimiter=',', comments='', )
-        np.savetxt('../Data_2/test_features_iterImp_reduced_withGrad.csv', test_data_reduced_withGrad, fmt=('%.3f'),
-                   delimiter=',', comments='', )
+        # np.savetxt('../Data_2/train_features_iterImp_reduced_withGrad.csv', train_data_reduced_withGrad, fmt=('%.3f'),
+        #            delimiter=',', comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
+        # np.savetxt('../Data_2/test_features_iterImp_reduced_withGrad.csv', test_data_reduced_withGrad, fmt=('%.3f'),
+        #            delimiter=',', comments='', )  #TODO Flavio: Habe das kommentiert, gab fehler "No such file or directory: ..."
         #        else:
         #            print("Gradient Data Set found, read in Data...")
         #            train_data_reduced_withGrad = np.genfromtxt('../Data_2/train_features_iterImp_reduced_withGrad.csv', dtype=float, delimiter=',')

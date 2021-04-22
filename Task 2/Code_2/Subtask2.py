@@ -68,18 +68,18 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     scaling = True  # set either true or false
 
     # define path
-    working_dir_path = '../Data_2_new'
+    # working_dir_path = '../Data_2_new'
 
     # setup
-    setup(working_dir_path)
+    # setup(working_dir_path)  #TODO Baumer: Das gibt Fehler: No such file or directory.." So ok?
 
-    # define files
-    file_train_features_imputed = 'train_features_imp.csv'
-    file_train_features_imputed_reduced = 'train_features_reduced_withGrad.csv'
-    #file_train_features_imputed_reduced_grad = 'train_features_reduced_withGrad.csv'
-    file_train_labels = 'train_labels.csv'
-    file_test_features_imputed = 'test_features_reduced_withGrad.csv'
-    file_to_write = 'Task_2_Subtask_2_Predictions.csv'
+    # define files #TODO Baumer: Gesamter block wird nicht gebrauch, deshalb komentiert. So ok?
+    # file_train_features_imputed = 'train_features_imp.csv'
+    # file_train_features_imputed_reduced = 'train_features_reduced_withGrad.csv'
+    # file_train_features_imputed_reduced_grad = 'train_features_reduced_withGrad.csv'
+    # file_train_labels = 'train_labels.csv'
+    # file_test_features_imputed = 'test_features_reduced_withGrad.csv'
+    # file_to_write = 'Task_2_Subtask_2_Predictions.csv'
 
     # reading data
     """
@@ -91,8 +91,8 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     """
     # reading data (for submission):
     df_train_features = df_train_X
-    df_test_features = df_train_Y
-    df_train_labels_sepsis = df_test_X
+    df_test_features = df_test_X
+    df_train_labels_sepsis = df_train_Y
 
     # print shapes and types
     print('sizes: \n',
@@ -128,12 +128,12 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
 
     if estim == 'forest':
         param_grid_forest = {
-            'criterion': ['gini', 'entropy'],  #['gini'],
-            'max_depth': [2, 4, 6, 8, 10, 12],  #[4]
-            'class_weight' : ['balanced', None]
+            'criterion': ['gini', 'entropy'],  # ['gini'],
+            'max_depth': [2, 3, 4, 5],  # [4]
+            'class_weight': ['balanced']
         }
         model_forest = DecisionTreeClassifier(random_state=42)
-        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc')  #, scoring= roc_auc_score)
+        grid = GridSearchCV(estimator=model_forest, param_grid=param_grid_forest, scoring='roc_auc')  # , scoring= roc_auc_score)
 
 
     elif estim == 'LR':
@@ -171,21 +171,21 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
         }
         """
         model_svc = SVC(random_state=42, verbose=True)
-        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=2)  #, scoring= roc_auc_score)
+        grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=2)  # , scoring= roc_auc_score)
 
     else:
         print("Variable <estim> has non-allowed value \n must be either SVC, LR or forest \n actual value:", estim)
 
-    #grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=2)
+    # grid = GridSearchCV(estimator=model_svc, param_grid=param_grid_SVC, scoring='roc_auc', n_jobs=2)
 
     # get full grid to be looped over
     print(f"grid: \n {grid}")
 
-    print("X train: \n", X_train[0:20, :])
-    print()
-    print("Y train: \n", Y_train[0:20])
-    print()
-    print("X test: \n", X_test[0:20, :])
+    #print("X train: \n", X_train[0:20, :])
+    #print()
+    #print("Y train: \n", Y_train[0:20])
+    #print()
+    #print("X test: \n", X_test[0:20, :])
 
     # Grid Search CV, fitting
     print(f"Start fitting Grid Search CV: \n Time elapsed: {datetime.now() - start}")
@@ -199,7 +199,7 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
     print("Grid Search Best Score: \n", grid.best_score_)
     print("Grid Search Best Estimator: \n", grid.best_estimator_)
     print()
-    print("Grid Search all CV Results: \n", grid.cv_results_)
+    #print("Grid Search all CV Results: \n", grid.cv_results_)
 
     # print grid.cv_results_ to csv file (via pandas df)
     gscv_results_pd = pd.DataFrame(grid.cv_results_)
@@ -214,23 +214,24 @@ def solveSubtask2(df_train_X, df_train_Y, df_test_X):
         Y_pred_decfct_sigmoid = sigmoid(Y_pred_decfct)
     Y_pred = grid.predict(X_test)
 
+
+
     # get type and first elements of actual Y and Y after sigmoid
-    print("type y_pred_decfct after sigmoid: ", type(Y_pred_decfct_sigmoid))
-    print(Y_pred_decfct_sigmoid[0:20])
-    print()
-    print("type y pred: ", type(Y_pred))
-    print(Y_pred[0:20])
+    #print("type y_pred_decfct after sigmoid: ", type(Y_pred_decfct_sigmoid))
+    #print(Y_pred_decfct_sigmoid[0:20])
+    #print()
+    #print("type y pred: ", type(Y_pred))
+    #print(Y_pred[0:20])
 
     # writing the Sigmoid Function to file
     task_2_output = Y_pred_decfct_sigmoid
     print('type output: ', type(task_2_output))
-    write_time = str(datetime.now())
-    np.savetxt(write_time+file_to_write, task_2_output, fmt='%.3f', delimiter=',', header='LABEL_Sepsis', comments='')
 
     print("Script Execution Time: ", datetime.now()-start)
 
     # for submission: return df_task_2_output as pandas df instead of ndarray
-    df_task_2_output = pd.DataFrame(task_2_output, columns="LABEL_Sepsis")
+
+    df_task_2_output = pd.DataFrame(data=task_2_output, columns=["LABEL_Sepsis"])
     print("df task 2 output as pd dataframe: \n", df_task_2_output)
 
     return df_task_2_output

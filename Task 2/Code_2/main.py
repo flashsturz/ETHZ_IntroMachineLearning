@@ -3,6 +3,10 @@
 # -----------------
 # Description Task 2
 
+# INSTRUCTIONS: Run this project from Task 2 folder. Using $python3 Code/main.py
+# IMPORTANT: Do not change anything at the files!! The provided files where imputed using the provided imputers.
+#            Since the imputing is timeconsuming, they are given as csv-files additionally.
+
 # -------------------------------------------------------------------------------------------------
 # IMPORT
 # ------
@@ -46,7 +50,7 @@ COL_SUBTASK3 = ['LABEL_RRate', 'LABEL_ABPm', 'LABEL_SpO2', 'LABEL_Heartrate']
 
 COL_ALL = ['pid']+COL_SUBTASK1+COL_SUBTASK2+COL_SUBTASK3
 
-USE_SIMPLEIMP_FILES=True
+USE_SIMPLEIMP_FILES=False
 
 TEST_SIMPLEIMP_MEAN='ImputedFiles/test_features_simpleImpute_mean.csv'
 TRAIN_SIMPLEIMP_MEAN='ImputedFiles/train_features_simpleImpute_mean.csv'
@@ -85,6 +89,7 @@ print('=====   Preparations finished. Imputing...')
 # Get simpleImpute data
 #  If cond. to jump very timeconsuming simpleImpute step if Imputingfiles are provided.
 if USE_SIMPLEIMP_FILES:
+    print("Reading in simpleImpute files...")
     test_imp_constant_pd = pd.read_csv(TEST_SIMPLEIMP_CONST)
     train_imp_constant_pd = pd.read_csv(TRAIN_SIMPLEIMP_CONST)
     test_imp_mean_pd = pd.read_csv(TEST_SIMPLEIMP_MEAN)
@@ -92,6 +97,7 @@ if USE_SIMPLEIMP_FILES:
     test_imp_median_pd = pd.read_csv(TEST_SIMPLEIMP_MEDIAN)
     train_imp_median_pd = pd.read_csv(TRAIN_SIMPLEIMP_MEDIAN)
 else:
+    print('Using simpleImpute. This can be very timeconsuming...')
     [test_imp_constant_pd, train_imp_constant_pd] = FeatureTransform_simpleImp.simpleimp_constant(test_features_pd, train_features_pd)
     [test_imp_mean_pd, train_imp_mean_pd] = FeatureTransform_simpleImp.simpleimp_mean(test_features_pd, train_features_pd)
     [test_imp_median_pd, train_imp_median_pd] = FeatureTransform_simpleImp.simpleimp_median(test_features_pd, train_features_pd)
@@ -124,7 +130,7 @@ del train_data_subtask2['pid']
 test_data_subtask2 = test_data_reduced_pd
 del test_data_subtask2['pid']
 
-result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_reduced_pd)
+result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_subtask2)
 
 
 # -------------------------------------------------------------------------------------------------

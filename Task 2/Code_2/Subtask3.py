@@ -78,8 +78,8 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
         print("Regression starts...")
         # print_elapsed_time(starttime)
 
-    ALPHAS = [1]
-    L1_RATIO = [0.5]
+    ALPHAS = [0.8]
+    L1_RATIO = [0.1]
 
     ENreg = ElasticNet(random_state=1234, max_iter=10e5, tol=1e-4)
     paramgrid = {'l1_ratio': L1_RATIO, 'alpha': ALPHAS}
@@ -94,12 +94,18 @@ def compute_Estimator(X_train, Y_train, KFOLD_SPLITS, KFOLD_REPEATS, starttime, 
     if verbose >= 1:
         print("  Finished regression-prep, fit and predict starts:")
         # print_elapsed_time(starttime)
-    gscv.fit(X_train, y=Y_train)
+    print("type of Y_train: ", type(Y_train))
+    print("Shape of Y_train", np.shape(Y_train))
+
+    gscv.fit(X_train, Y_train)
     if verbose >= 1:
         print("   Fit finished...")
         # print_elapsed_time(starttime)
 
     gcsv_results_pd = pd.DataFrame(gscv.cv_results_)
+
+    print("Grid Search Best Score: \n", grid.best_score_)
+    print("Grid Search Best Estimator: \n", grid.best_estimator_)
 
     return gcsv_results_pd, gscv.best_estimator_
 
