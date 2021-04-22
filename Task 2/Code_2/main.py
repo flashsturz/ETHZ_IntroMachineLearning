@@ -103,6 +103,11 @@ result_subtask1_pd = Subtask1.solveSubtask1(train_data_reduced_withGrad_pd, test
 print('=====   Subtask1 finished. Solving subtask2...')
 
 train_label_subtask2 = train_labels_pd['LABEL_Sepsis']
+train_data_subtask2 = train_data_reduced_pd
+del train_data_subtask2['pid']
+test_data_subtask2 = test_data_reduced_pd
+del test_data_subtask2['pid']
+
 result_subtask2_pd = Subtask2.solveSubtask2(train_data_reduced_pd, train_label_subtask2, test_data_reduced_pd)
 
 

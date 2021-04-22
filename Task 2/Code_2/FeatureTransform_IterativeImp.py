@@ -157,7 +157,7 @@ def iterativeImpute(train_data_path, test_data_path, use_gradients):
         print("Finished Gradients. Finished Imputation.")
         print_elapsed_time(totaltime_start)
 
-        gradient_labels = ['Grad_' + s for s in train_data_frame.columns[2:]]
+        gradient_labels = ['Grad_' + s for s in train_data_frame.columns[3:]]
 
         train_data_reduced_withGrad_pd = pd.DataFrame(train_data_reduced_withGrad,
                                                       columns=[*train_data_frame.columns, *gradient_labels])
