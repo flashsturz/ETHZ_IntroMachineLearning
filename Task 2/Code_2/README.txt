@@ -10,8 +10,8 @@ IML 2021 @ETHZ - TASK 2 SOLUTION
 
 The structure of your folder needs to be like the following:
 
-Task 2
-	Code_2
+Task 2 # main directory
+    Code_2
 	   #Directory for submitted Code
 	   main.py
 	   Subtask1.py
@@ -20,7 +20,7 @@ Task 2
 	   FeatureTransform_IterativeImp.py
 	   FeatureTransform_simpleImp.py
 	   README.txt
-	Data_2
+    Data_2
 	   #Directory for Data Files
 	   train_features.csv
 	   train_labels.csv
