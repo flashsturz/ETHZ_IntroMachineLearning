@@ -8,9 +8,16 @@
 #--------------------------------------------------------------------------------------------------
 
 import numpy as np
+import random
+from datetime import datetime
+import time as time
+import numpy as np
+import pandas as pd
 from sklearn.metrics import f1_score
 import tensorflow as tf
 from tensorflow import keras
+
+import Simon
 
 
 # -------------------------------------------------------------------------------------------------
@@ -35,17 +42,18 @@ PATH_SAMPLE_FILE = 'Data_3/sample.csv'
 # ----------
 print('=====Execution starts.======')
 print('=====   Preparations...')
+current_time_str = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
 
 random.seed(1234)
 
-current_time_str = datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
 train_pd = pd.read_csv(PATH_TRAIN_DATA)
 test_pd = pd.read_csv(PATH_TEST_DATA)
 
 sample_pd = pd.read_csv(PATH_SAMPLE_FILE)
 
+[seq, fullseq, act] = Simon.bdpsimon_train2letters(train_pd)
+print("Shape of seq is: ", np.shape(seq))
+print("Shape of act is: ", np.shape(act))
 
-
-# ==================================================================================================
-# VARIABLES
-# ----------
+# simpleModel=Simon.keras_getmodel_fullseq(4, fullseq, act)
+test = Simon.keras_test(4, fullseq, act)
