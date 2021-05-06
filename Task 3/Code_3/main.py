@@ -18,6 +18,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 import Simon
+import Flavio
 
 
 # -------------------------------------------------------------------------------------------------
@@ -52,8 +53,17 @@ test_pd = pd.read_csv(PATH_TEST_DATA)
 sample_pd = pd.read_csv(PATH_SAMPLE_FILE)
 
 [seq, fullseq, act] = Simon.bdpsimon_train2letters(train_pd)
+[x_train_flavio, x_test_flavio, x_val_flavio, y_train_flavio, y_val_flavio] = Flavio.lettersToNumbers(train_pd['Sequence'].to_numpy(),
+                                                                                                      test_pd['Sequence'].to_numpy(),
+                                                                                                      train_pd['Active'].to_numpy(), True)
+
 print("Shape of seq is: ", np.shape(seq))
 print("Shape of act is: ", np.shape(act))
+print("Shape of x_train_flavio is: ", np.shape(x_train_flavio))
+print("Shape of x_test_flavio is: ", np.shape(x_test_flavio))
+print("Shape of x_val_flavio is: ", np.shape(x_val_flavio))
+print("Shape of y_train_flavio is: ", np.shape(y_train_flavio))
+print("Shape of y_val_flavio is: ", np.shape(y_val_flavio))
 
-# simpleModel=Simon.keras_getmodel_fullseq(4, fullseq, act)
-test = Simon.keras_test(4, fullseq, act)
+simpleModel=Simon.keras_getmodel(x_train_flavio,y_train_flavio)
+#test = Simon.keras_test(4, fullseq, act)

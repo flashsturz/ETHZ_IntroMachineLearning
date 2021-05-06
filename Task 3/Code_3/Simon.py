@@ -20,8 +20,8 @@ def bdpsimon_train2letters(pandas_traindata):
     seq=np.asarray(seq)
     return[seq, seq_as_word, pandas_traindata['Active'].to_numpy()]
 
-def keras_getmodel():
-    inputs = keras.Input(shape=(4, ))
+def keras_getmodel(x_train,y_train):
+    inputs = keras.Input(shape=(80, ))
     dense = layers.Dense(10, activation='relu')
     x = dense(inputs)
     x = layers.Dense(64, activation="relu")(x)
