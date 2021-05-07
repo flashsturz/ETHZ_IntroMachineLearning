@@ -1,0 +1,59 @@
+=====Execution starts.======
+=====   Preparations...
+Shape of seq is:  (112000, 4)
+Shape of act is:  (112000,)
+Shape of x_train_flavio is:  (89600, 80)
+Shape of x_test_flavio is:  (48000, 80)
+Shape of x_val_flavio is:  (22400, 80)
+Shape of y_train_flavio is:  (89600,)
+Shape of y_val_flavio is:  (22400,)
+=====   Model preparation...
+    Time elapsed since start: 0.73 s
+==== Starting with Model  modelsmall
+    Time elapsed since start: 0.73 s
+Model: "modelsmall"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         [(None, 80)]              0         
+_________________________________________________________________
+dense (Dense)                (None, 10)                810       
+_________________________________________________________________
+dense1 (Dense)               (None, 50)                550       
+_________________________________________________________________
+dropout (Dropout)            (None, 50)                0         
+_________________________________________________________________
+dense2 (Dense)               (None, 50)                2550      
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 50)                0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 51        
+=================================================================
+Total params: 3,961
+Trainable params: 3,961
+Non-trainable params: 0
+_________________________________________________________________
+    Time elapsed since start: 0.82 s
+Train on 89600 samples, validate on 22400 samples
+Epoch 1/50
+89600/89600 - 2s - loss: 0.0943 - precision: 0.6998 - recall: 0.3034 - val_loss: 0.0552 - val_precision: 0.7213 - val_recall: 0.6746
+Epoch 2/50
+89600/89600 - 2s - loss: 0.0488 - precision: 0.8117 - recall: 0.6963 - val_loss: 0.0413 - val_precision: 0.8791 - val_recall: 0.6708
+Epoch 3/50
+89600/89600 - 2s - loss: 0.0379 - precision: 0.8507 - recall: 0.7719 - val_loss: 0.0345 - val_precision: 0.8333 - val_recall: 0.7980
+Epoch 4/50
+89600/89600 - 2s - loss: 0.0334 - precision: 0.8595 - recall: 0.7965 - val_loss: 0.0315 - val_precision: 0.8964 - val_recall: 0.7444
+Epoch 5/50
+89600/89600 - 2s - loss: 0.0303 - precision: 0.8783 - recall: 0.8103 - val_loss: 0.0292 - val_precision: 0.8860 - val_recall: 0.8042
+Epoch 6/50
+89600/89600 - 2s - loss: 0.0287 - precision: 0.8831 - recall: 0.8220 - val_loss: 0.0290 - val_precision: 0.8900 - val_recall: 0.7968
+Epoch 7/50
+89600/89600 - 3s - loss: 0.0274 - precision: 0.8846 - recall: 0.8361 - val_loss: 0.0297 - val_precision: 0.9032 - val_recall: 0.7681
+Epoch 8/50
+89600/89600 - 2s - loss: 0.0267 - precision: 0.8948 - recall: 0.8379 - val_loss: 0.0276 - val_precision: 0.8820 - val_recall: 0.8204
+Epoch 9/50
+89600/89600 - 2s - loss: 0.0261 - precision: 0.8927 - recall: 0.8411 - val_loss: 0.0283 - val_precision: 0.9189 - val_recall: 0.7631
+Epoch 10/50
+89600/89600 - 2s - loss: 0.0248 - precision: 0.8990 - recall: 0.8452 - val_loss: 0.0266 - val_precision: 0.8877 - val_recall: 0.8180
+Epoch 11/50
+89600/89600 - 2s - loss: 0.0246 - precision: 0.8954 - recall: 0.8531 - val_loss: 0.0271 - val_precision: 0.8743 - val_recall: 0.8242
