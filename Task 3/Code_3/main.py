@@ -18,6 +18,8 @@ from sklearn.metrics import classification_report
 import pandas as pd
 
 from keras.models import Sequential
+from keras.optimizers.schedules import ExponentialDecay
+from keras.optimizers import Adam
 from keras.layers import Dense, Dropout
 from keras import backend as K
 from keras.metrics import Recall, Precision
@@ -61,6 +63,7 @@ def lettersToNumbers(train_data, test_data, train_labels, use_validation_set):
     
     enc.fit(numbers_train) # Fit only on Training Data, best practice 
     converted_train_Data = enc.transform(numbers_train).toarray()
+    
     converted_test_Data = enc.transform(numbers_test).toarray()
     if use_validation_set == True: # only necessary if we use validation data
         converted_val_Data = enc.transform(numbers_val).toarray()
@@ -75,7 +78,7 @@ def lettersToNumbers(train_data, test_data, train_labels, use_validation_set):
 PATH_TRAIN_DATA = '../Data_3/train.csv'
 PATH_TEST_DATA = '../Data_3/test.csv'
 
-use_validation_set = False # Toggle for Validation Set creation
+use_validation_set = True # Toggle for Validation Set creation
 
 # -------------------------------------------------------------------------------------------------
 # PREPS
@@ -106,9 +109,18 @@ else:
 
 print('=====   Prepare Model...')
 print_elapsed_time(starttime)
+
+# Learn Rate Scheduler
+lr_schedule = ExponentialDecay(
+    initial_learning_rate=1e-2,
+    decay_steps=1000,
+    decay_rate=0.9)
+
 model = Sequential()
 model.add(Dense(150, input_dim = encoded_train_features.shape[1], activation = 'relu', kernel_initializer = 'he_normal'))
 model.add(Dropout(rate= 0.2, seed = 42 )) # Droput layers prevent overfitting
+model.add(Dense(300, activation = 'relu', kernel_initializer = 'he_normal')) # Relu Activation is better than sigmoid, according to machinelearningmastery
+model.add(Dropout(rate= 0.2, seed = 42 ))
 model.add(Dense(300, activation = 'relu', kernel_initializer = 'he_normal')) # Relu Activation is better than sigmoid, according to machinelearningmastery
 model.add(Dropout(rate= 0.2, seed = 42 ))
 model.add(Dense(150, activation = 'relu', kernel_initializer = 'he_normal'))
@@ -117,12 +129,12 @@ model.add(Dense(1, activation = 'sigmoid')) # Sigmoid output, we need to convert
 
 print('=====   Compile Model...')
 print_elapsed_time(starttime)
-model.compile(loss='binary_crossentropy', optimizer = 'adam', metrics = [Precision(), Recall()])
+model.compile(loss='binary_crossentropy', optimizer = Adam(learning_rate=lr_schedule), metrics = [Precision(), Recall()])
 
 print('=====   Fit Model...')
 print_elapsed_time(starttime)
 if use_validation_set == True:
-    model.fit(encoded_train_features, train_labels, epochs = 100, batch_size = 64, validation_data = (encoded_val_features, val_labels), verbose = 2, workers = 4)
+    model.fit(encoded_train_features, train_labels, epochs = 20, batch_size = 64, validation_data = (encoded_val_features, val_labels), verbose = 2, workers = 4)
     # Batch size: https://machinelearningmastery.com/how-to-control-the-speed-and-stability-of-training-neural-networks-with-gradient-descent-batch-size/
 else:
     model.fit(encoded_train_features, train_labels, epochs = 20, batch_size = 64, validation_split = 0.2, verbose = 2, workers = 4)

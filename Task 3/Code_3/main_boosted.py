@@ -15,11 +15,15 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from sklearn.metrics import classification_report
+
+from sklearn.experimental import enable_hist_gradient_boosting
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+from sklearn.model_selection import GridSearchCV
 import pandas as pd
 
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers.embeddings import Embedding
+from keras.layers import Dense, Dropout
 from keras import backend as K
 from keras.metrics import Recall, Precision
 
@@ -62,6 +66,7 @@ def lettersToNumbers(train_data, test_data, train_labels, use_validation_set):
     
     enc.fit(numbers_train) # Fit only on Training Data, best practice 
     converted_train_Data = enc.transform(numbers_train).toarray()
+    
     converted_test_Data = enc.transform(numbers_test).toarray()
     if use_validation_set == True: # only necessary if we use validation data
         converted_val_Data = enc.transform(numbers_val).toarray()
@@ -76,8 +81,7 @@ def lettersToNumbers(train_data, test_data, train_labels, use_validation_set):
 PATH_TRAIN_DATA = '../Data_3/train.csv'
 PATH_TEST_DATA = '../Data_3/test.csv'
 
-use_validation_set = True # Toggle for Validation Set creation
-use_weighted_fitting = False # Use Class Weights for Fitting --> https://www.tensorflow.org/tutorials/structured_data/imbalanced_data
+use_validation_set = False # Toggle for Validation Set creation
 
 # -------------------------------------------------------------------------------------------------
 # PREPS
@@ -91,13 +95,6 @@ print_elapsed_time(starttime)
 random.seed(1234)
 
 train_data_pd = pd.read_csv(PATH_TRAIN_DATA)
-neg, pos = np.bincount(train_data_pd['Active']) # Number of negative and positive train datas
-total = neg + pos
-# Compute Class Weights for fitting
-weight_for_0 = (1/neg) * (total) / 2.0
-weight_for_1 = (1/pos) * total / 2.0
-class_weight = {0: weight_for_0, 1: weight_for_1}
-
 test_data_pd = pd.read_csv(PATH_TEST_DATA)
 
 train_labels_pd = train_data_pd['Active']
@@ -113,46 +110,34 @@ if use_validation_set == True:
 else:
     [encoded_train_features, encoded_test_features, train_labels] = lettersToNumbers(train_features_pd.values, test_features_pd.values, train_labels_pd.values, use_validation_set)
 
-print('=====   Prepare Model...')
+print('=====   Setup Model...')
 print_elapsed_time(starttime)
-model = Sequential()
-model.add(Embedding(input_dim = 21, output_dim = 40, input_length = encoded_train_features.shape[1])) # Add embedding layer that has full vocabulary of all characters
-model.add(Flatten())
-model.add(Dense(150, activation = 'relu', kernel_initializer = 'he_normal'))
-model.add(Dropout(rate= 0.2, seed = 42 )) # Droput layers prevent overfitting
-model.add(Dense(300, activation = 'relu', kernel_initializer = 'he_normal')) # Relu Activation is better than sigmoid, according to machinelearningmastery
-model.add(Dropout(rate= 0.2, seed = 42 ))
-model.add(Dense(150, activation = 'relu', kernel_initializer = 'he_normal'))
-model.add(Dropout(rate= 0.2, seed = 42 ))
-model.add(Dense(1, activation = 'sigmoid')) # Sigmoid output, we need to convert this to a binary output with the round() function
 
-print('=====   Compile Model...')
+clf = HistGradientBoostingClassifier(loss = 'binary_crossentropy', scoring = 'f1', validation_fraction = 0.1, verbose = 2, random_state = 42)
+
+parameters = {
+        'max_leaf_nodes': [200],
+        'l2_regularization': [0, 0.1, 0.59, 0.6, 0.61],
+        #'learning_rate': [0.1, 0.15, 0.2, 0.25],
+        'learning_rate': [0.1, 0.19, 0.2, 0.21],
+        'max_iter': [500]}
+
+gridCV = GridSearchCV(clf, parameters, scoring = 'f1', n_jobs = -1, cv = 5, verbose = 3)
+
+print('=====   Fit Model using GridSearchCV...')
 print_elapsed_time(starttime)
-model.compile(loss='binary_crossentropy', optimizer = 'adam', metrics = [Precision(), Recall()])
+gridCV.fit(encoded_train_features, train_labels)
+grid_results = gridCV.cv_results_
 
-print(model.summary())
+pd.DataFrame(grid_results).to_csv(f'../grid_results{time.perf_counter()}.csv', )
 
-print('=====   Fit Model...')
-print_elapsed_time(starttime)
-if use_validation_set == True:
-    if use_weighted_fitting == True:
-        model.fit(encoded_train_features, train_labels, epochs = 60, batch_size = 32, validation_data = (encoded_val_features, val_labels), class_weight = class_weight, verbose = 2, workers = 4)
-    else:
-        model.fit(encoded_train_features, train_labels, epochs = 30, batch_size = 32, validation_data = (encoded_val_features, val_labels), verbose = 2, workers = 4)
-        # Batch size: https://machinelearningmastery.com/how-to-control-the-speed-and-stability-of-training-neural-networks-with-gradient-descent-batch-size/
-else:
-    if use_weighted_fitting == True:
-        model.fit(encoded_train_features, train_labels, epochs = 20, batch_size = 64, validation_split = 0.2, class_weight = class_weight, verbose = 2, workers = 4)
-    else:
-        model.fit(encoded_train_features, train_labels, epochs = 20, batch_size = 64, validation_split = 0.2, verbose = 2, workers = 4)
+best_estim = gridCV.best_estimator_
 
 print('=====   Evaluate Model...')
 print_elapsed_time(starttime)
 if use_validation_set == True:
     # Calculate the f1_score on the validation data set
-    loss, precision, recall = model.evaluate(encoded_val_features, val_labels, verbose = 0)
-    manual_f1_score = 2*((precision*recall)/(precision+recall+K.epsilon())) # calculate f1_score manually with precision and recall
-    y_pred_val = np.round(model.predict(encoded_val_features, workers = 2))
+    y_pred_val = best_estim.predict(encoded_val_features)
 
     print(classification_report(val_labels, y_pred_val)) # print report
     F1_score_sklearn = f1_score(val_labels, y_pred_val) # calculate f1_score through SK learn
@@ -160,5 +145,5 @@ if use_validation_set == True:
     print_elapsed_time(starttime)
 
 # Write prediction of test data to output file
-y_pred = np.round(model.predict(encoded_test_features, workers = 2))
-np.savetxt('prediction_neural_embeddings.csv', y_pred, delimiter='\n', fmt ='%d')
+y_pred = np.round(best_estim.predict(encoded_test_features))
+np.savetxt('prediction_boosted.csv', y_pred, delimiter='\n', fmt ='%d')
